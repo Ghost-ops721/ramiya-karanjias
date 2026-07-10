@@ -1,0 +1,152 @@
+@import "tailwindcss";
+
+:root {
+  --paper: #f2efe8;
+  --paper-deep: #e8e3d8;
+  --ink: #161410;
+  --ink-soft: #3d3830;
+  --rule: #c9c2b4;
+  --accent: #6b2d1a;
+  --accent-soft: #8a3d28;
+  --link: #1f3d5c;
+  --focus: #1f3d5c;
+}
+
+@theme inline {
+  --color-paper: var(--paper);
+  --color-paper-deep: var(--paper-deep);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-rule: var(--rule);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-link: var(--link);
+  --font-display: var(--font-fraunces), Georgia, "Times New Roman", serif;
+  --font-body: var(--font-source-serif), Georgia, "Times New Roman", serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background:
+    radial-gradient(ellipse at top, #f7f4ed 0%, var(--paper) 55%),
+    var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body), Georgia, "Times New Roman", serif;
+  font-size: 1.125rem;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: #d9cfc0;
+  color: var(--ink);
+}
+
+:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+}
+
+.paper-rule {
+  border: 0;
+  border-top: 1px solid var(--rule);
+  margin: 0;
+}
+
+.masthead-title {
+  font-family: var(--font-display);
+  font-weight: 650;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+}
+
+.kicker {
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.prose-article {
+  max-width: 42rem;
+}
+
+.prose-article h1,
+.prose-article h2,
+.prose-article h3,
+.prose-article h4 {
+  font-family: var(--font-display);
+  color: var(--ink);
+  line-height: 1.25;
+  margin: 1.75em 0 0.6em;
+}
+
+.prose-article h2 {
+  font-size: 1.55rem;
+}
+
+.prose-article h3 {
+  font-size: 1.3rem;
+}
+
+.prose-article p {
+  margin: 0 0 1.1em;
+}
+
+.prose-article ul,
+.prose-article ol {
+  margin: 0 0 1.2em;
+  padding-left: 1.35em;
+}
+
+.prose-article li {
+  margin-bottom: 0.45em;
+}
+
+.prose-article a {
+  color: var(--link);
+  font-weight: 600;
+  text-underline-offset: 0.18em;
+}
+
+.prose-article a:hover {
+  color: var(--accent);
+}
+
+.prose-article strong {
+  font-weight: 700;
+}
+
+.fade-mount {
+  animation: fade-mount 420ms ease-out both;
+}
+
+@keyframes fade-mount {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fade-mount {
+    animation: none;
+  }
+  html {
+    scroll-behavior: auto;
+  }
+}
