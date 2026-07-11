@@ -24,7 +24,7 @@ export function SiteHeader() {
 
         <nav className="hidden items-center gap-5 text-[1.05rem] md:flex" aria-label="Main">
           <Link href="/topics" className="font-semibold text-[#161410] no-underline hover:text-[#6b2d1a]">
-            All topics
+            Search topics
           </Link>
           <Link href="/section/faqs" className="font-semibold text-[#161410] no-underline hover:text-[#6b2d1a]">
             FAQs
@@ -55,7 +55,7 @@ export function SiteHeader() {
         >
           <div className="mb-4 flex flex-col gap-3 text-[1.15rem]">
             <Link href="/topics" onClick={() => setOpen(false)} className="font-semibold text-[#161410] no-underline">
-              All topics
+              Search topics
             </Link>
             <Link href="/section/faqs" onClick={() => setOpen(false)} className="font-semibold text-[#161410] no-underline">
               FAQs

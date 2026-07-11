@@ -13,7 +13,7 @@ export function SiteFooter() {
           <p className="kicker mb-2">Quick links</p>
           <ul className="space-y-2">
             <li>
-              <Link href="/topics">All topics</Link>
+              <Link href="/topics">Search topics</Link>
             </li>
             <li>
               <Link href="/section/faqs">FAQs</Link>
