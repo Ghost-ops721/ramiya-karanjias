@@ -45,7 +45,7 @@ export function TopicBrowser({ topics }: { topics: TopicItem[] }) {
         onChange={(e) => setQuery(e.target.value)}
         placeholder="Type a word — e.g. Navjot, prayer, Shahnameh"
         autoComplete="off"
-        className="w-full max-w-2xl border-2 border-[#161410] bg-[#f7f4ed] px-4 py-3 text-[1.2rem] text-[#161410] outline-none placeholder:text-[#3d3830]/70 focus:border-[#6b2d1a]"
+        className="w-full max-w-2xl border border-[#161410] bg-[#f7f4ed] px-4 py-3 text-[1.2rem] text-[#161410] outline-none ring-0 placeholder:text-[#3d3830]/70 focus:border-[#161410] focus:outline-none focus:ring-0 focus-visible:outline-none"
       />
       <p className="mt-3 text-[1.1rem] text-ink-soft" aria-live="polite">
         {searching

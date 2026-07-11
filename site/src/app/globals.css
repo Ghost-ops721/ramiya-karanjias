@@ -50,9 +50,15 @@ body {
   color: var(--ink);
 }
 
-:focus-visible {
+:focus-visible:not(#topic-search) {
   outline: 3px solid var(--focus);
   outline-offset: 3px;
+}
+
+#topic-search:focus,
+#topic-search:focus-visible {
+  outline: none;
+  box-shadow: none;
 }
 
 .paper-rule {
