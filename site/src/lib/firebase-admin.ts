@@ -1,5 +1,4 @@
 import { initializeApp, getApps, cert, type App } from "firebase-admin/app";
-import { getAuth } from "firebase-admin/auth";
 import { getFirestore } from "firebase-admin/firestore";
 
 function privateKeyFromEnv(): string | undefined {
@@ -29,10 +28,6 @@ function getAdminApp(): App {
   });
 }
 
-export function adminAuth() {
-  return getAuth(getAdminApp());
-}
-
 export function adminDb() {
   return getFirestore(getAdminApp());
 }
@@ -49,8 +44,10 @@ export function isAdminEmail(email: string | null | undefined): boolean {
   return adminEmails().includes(email.toLowerCase());
 }
 
+/** Lazy-load Auth to avoid jose/jwks-rsa ESM crash on Vercel serverless. */
 export async function verifyAdminIdToken(idToken: string) {
-  const decoded = await adminAuth().verifyIdToken(idToken);
+  const { getAuth } = await import("firebase-admin/auth");
+  const decoded = await getAuth(getAdminApp()).verifyIdToken(idToken);
   if (!isAdminEmail(decoded.email)) {
     throw new Error("Not an allowlisted admin");
   }
