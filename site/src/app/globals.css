@@ -21,8 +21,8 @@
   --color-accent: var(--accent);
   --color-accent-soft: var(--accent-soft);
   --color-link: var(--link);
-  --font-display: var(--font-fraunces), Georgia, "Times New Roman", serif;
-  --font-body: var(--font-source-serif), Georgia, "Times New Roman", serif;
+  --font-display: var(--font-literata), Georgia, "Times New Roman", serif;
+  --font-body: var(--font-literata), Georgia, "Times New Roman", serif;
 }
 
 * {
@@ -50,7 +50,7 @@ body {
   color: var(--ink);
 }
 
-:focus-visible:not(#topic-search) {
+:focus-visible:not(#topic-search):not(.admin-field) {
   outline: 3px solid var(--focus);
   outline-offset: 3px;
 }
@@ -59,6 +59,56 @@ body {
 #topic-search:focus-visible {
   outline: none;
   box-shadow: none;
+}
+
+/* Admin fields: same look idle / focus / paste / autofill — no ring, no blue, no black border */
+.admin-field {
+  appearance: none;
+  -webkit-appearance: none;
+  border: 1px solid var(--rule) !important;
+  border-radius: 0;
+  background-color: var(--paper) !important;
+  background-image: none !important;
+  color: var(--ink) !important;
+  caret-color: var(--ink);
+  outline: none !important;
+  outline-offset: 0 !important;
+  box-shadow: none !important;
+  -webkit-box-shadow: none !important;
+}
+
+.admin-field:hover,
+.admin-field:focus,
+.admin-field:focus-visible,
+.admin-field:active {
+  border: 1px solid var(--rule) !important;
+  background-color: var(--paper) !important;
+  background-image: none !important;
+  color: var(--ink) !important;
+  outline: none !important;
+  outline-offset: 0 !important;
+  box-shadow: none !important;
+  -webkit-box-shadow: none !important;
+}
+
+.admin-field:-webkit-autofill,
+.admin-field:-webkit-autofill:hover,
+.admin-field:-webkit-autofill:focus,
+.admin-field:-webkit-autofill:active {
+  -webkit-text-fill-color: var(--ink) !important;
+  caret-color: var(--ink);
+  border: 1px solid var(--rule) !important;
+  /* Paint over Chrome/Safari autofill (blue/yellow) with paper color */
+  -webkit-box-shadow: 0 0 0 1000px var(--paper) inset !important;
+  box-shadow: 0 0 0 1000px var(--paper) inset !important;
+  transition: background-color 99999s ease-out 0s;
+  background-color: var(--paper) !important;
+}
+
+.admin-field:-internal-autofill-selected {
+  appearance: menulist-button;
+  background-image: none !important;
+  background-color: var(--paper) !important;
 }
 
 .paper-rule {
@@ -112,11 +162,41 @@ body {
 .prose-article ul,
 .prose-article ol {
   margin: 0 0 1.2em;
-  padding-left: 1.35em;
+  padding-left: 1.25em;
+}
+
+/* Tailwind preflight clears markers; restore them for real lists. */
+.prose-article ul {
+  list-style-type: disc;
+}
+
+.prose-article ol {
+  list-style-type: decimal;
+  padding-left: 1.5em;
 }
 
 .prose-article li {
   margin-bottom: 0.45em;
+  padding-left: 0.15em;
+}
+
+/*
+ * Scraped articles often use a lone "- Section title" as a heading.
+ * Keep those flush with body text instead of a hanging empty indent.
+ */
+.prose-article ul:has(> li:only-child) {
+  list-style: none;
+  padding-left: 0;
+  margin: 1.75em 0 0.6em;
+}
+
+.prose-article ul:has(> li:only-child) > li {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  line-height: 1.25;
+  margin-bottom: 0;
+  padding-left: 0;
+  color: var(--ink);
 }
 
 .prose-article a {

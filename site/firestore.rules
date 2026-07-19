@@ -1,0 +1,27 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isAdmin() {
+      return request.auth != null
+        && request.auth.token.email in [
+          'ncarnac@gmail.com',
+          'ramiyark@gmail.com'
+        ];
+    }
+
+    match /articles/{slug} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /nav/{docId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /settings/{docId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+  }
+}

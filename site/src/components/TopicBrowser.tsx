@@ -2,12 +2,15 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
+import { sortLetter } from "@/lib/sortLetter";
 
 export type TopicItem = {
   slug: string;
   title: string;
   section: string | null;
 };
+
+export { sortLetter };
 
 export function TopicBrowser({ topics }: { topics: TopicItem[] }) {
   const [query, setQuery] = useState("");
@@ -23,8 +26,7 @@ export function TopicBrowser({ topics }: { topics: TopicItem[] }) {
 
   const grouped = useMemo(() => {
     return filtered.reduce<Record<string, TopicItem[]>>((acc, topic) => {
-      const letter =
-        topic.title.replace(/^[^A-Za-z]+/, "").charAt(0).toUpperCase() || "#";
+      const letter = sortLetter(topic.title);
       (acc[letter] ??= []).push(topic);
       return acc;
     }, {});

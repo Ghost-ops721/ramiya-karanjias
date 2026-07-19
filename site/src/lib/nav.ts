@@ -28,7 +28,17 @@ export const sections: Section[] = [
       { title: "Zoroastrian Priests", slug: "zoroastrian-priests" },
       { title: "Manthra Prayers", slug: "manthra-prayers" },
       { title: "Spirituality", slug: "spirituality" },
-      { title: "Resurrection in Zoroastrianism", slug: "resurrection-in-the-zoroastrian-apocalyptic-tradition" },
+    ],
+  },
+  {
+    id: "correcting-misinformation",
+    title: "Correcting Misinformation",
+    blurb: "Clarifications on commonly misunderstood topics.",
+    items: [
+      {
+        title: "Resurrection in Zoroastrianism",
+        slug: "resurrection-in-the-zoroastrian-apocalyptic-tradition",
+      },
     ],
   },
   {
@@ -96,8 +106,18 @@ export const sections: Section[] = [
       { title: "Pahlavi", slug: "pahlavi" },
       { title: "Pazand", slug: "pazand" },
       { title: "Persian", slug: "persian" },
-      { title: "Tamam Khordeh Avesta (Shahenshahi)", slug: "tamam-khordeh-avesta-shahenshahi" },
       { title: "Gatha Days Prayers", slug: "prayers-for-5-gatha-days" },
+    ],
+  },
+  {
+    id: "tamam-khordeh-avesta",
+    title: "Tamam Khordeh Avesta — Shahenshahi",
+    blurb: "Full Shahenshahi Khordeh Avesta prayers and text.",
+    items: [
+      {
+        title: "Tamam Khordeh Avesta (Shahenshahi)",
+        slug: "tamam-khordeh-avesta-shahenshahi",
+      },
     ],
   },
   {
@@ -223,7 +243,7 @@ export const sections: Section[] = [
   {
     id: "series",
     title: "Sasanian History Series",
-    blurb: "Recent serial essays on the last Sasanian emperors.",
+    blurb: "Serial essays on the Sasanian dynasty, from founding kings to the last emperors.",
     items: [
       {
         title: "SSS 41. Yazdezerd III — Part 4",
@@ -248,6 +268,146 @@ export const sections: Section[] = [
       {
         title: "SSS 36. Ten Rulers in Eight Years — Part 1",
         slug: "sss-36-10-rulers-in-8-years-628-635before-the-last-sasanian-emperor-part-1",
+      },
+      {
+        title: "SSS 35. King Kobad II / Shiroy (Feb 628 – Nov 628)",
+        slug: "sss-35-king-kobad-ii-shiroy-feb-628-nov-628",
+      },
+      {
+        title: "SSS 34. King Khushru Parviz — Part 11 (last)",
+        slug: "sss-34-king-khushru-parviz-khushru-cosroe-ii-591-628-part-11-last",
+      },
+      {
+        title: "SSS 33. King Khushru Parviz — Part 10",
+        slug: "sss-33-king-khushru-parviz-khushru-cosroe-ii-591-628-part-10",
+      },
+      {
+        title: "SSS 32. King Khushru Parviz — Part 9",
+        slug: "sss-32-king-khushru-parviz-khushru-cosroe-ii-591-628-part-9",
+      },
+      {
+        title: "SSS 31. King Khushru Parviz — Part 8",
+        slug: "sss-31-king-khushru-parviz-khushru-cosroe-ii-591-628-part-8",
+      },
+      {
+        title: "SSS 30. King Khushru Parviz — Part 7",
+        slug: "sss-30-king-khushru-parviz-khushru-cosroe-ii-591-628-part-7",
+      },
+      {
+        title: "SSS 29. King Khushru Parviz — Part 6",
+        slug: "sss-29-king-khushru-parviz-khushru-cosroe-ii-591-628-part-6",
+      },
+      {
+        title: "SSS 28. King Khushru Parviz — Part 5",
+        slug: "sss-28-king-khushru-parviz-khushru-cosroe-ii-591-628-part-5",
+      },
+      {
+        title: "SSS 27. King Khushru Parviz — Part 4",
+        slug: "sss-27-king-khushru-parviz-khushru-cosroe-ii-591-628-part-4",
+      },
+      {
+        title: "SSS 26. King Khushru Parviz — Part 3",
+        slug: "sss-26-king-khushru-parviz-khushru-cosroe-ii-591-628-part-3",
+      },
+      {
+        title: "SSS 25. King Khushru Parviz — Part 2",
+        slug: "sss-24-king-khushru-parviz-khushru-cosroe-ii-591-628-part-2",
+      },
+      {
+        title: "SSS 24. King Khushru Parviz — Part 1",
+        slug: "sss-24-king-khushru-parviz-khushru-cosroe-ii-591-628-part-1",
+      },
+      {
+        title: "SSS 23. King Hormazd IV — Part 2",
+        slug: "sss-23-king-hormazd-iv-579-591-part-2",
+      },
+      {
+        title: "SSS 22. King Hormazd IV — Part 1",
+        slug: "sss-22-king-hormazd-iv-579-591-part-1",
+      },
+      {
+        title: "SSS 21. King Khushru / Nosherwan Ādel — Part 7 (last)",
+        slug: "sss-21-king-khushru-cosroe-i-nosherwan-adel-531-579-part-7-last",
+      },
+      {
+        title: "SSS 20. King Khushru / Nosherwan Ādel — Part 6",
+        slug: "sss-20-king-khushru-cosroe-i-nosherwan-adel-531-579-part-6",
+      },
+      {
+        title: "SSS 19. King Khushru / Nosherwan Ādel — Part 5",
+        slug: "sss-19-king-khushru-cosroe-i-nosherwan-adel-531-579-part-5",
+      },
+      {
+        title: "SSS 18. King Khushru / Nosherwan Ādel — Part 4",
+        slug: "sss18-king-khushru-cosroe-i-nosherwan-adel-531-579-part-4",
+      },
+      {
+        title: "SSS 17. King Khushru / Nosherwan Ādel — Part 3",
+        slug: "sss17-king-khushru-cosroe-i-nosherwan-adel-531-579-part-3",
+      },
+      {
+        title: "SSS 16. King Khushru / Nosherwan Ādel — Part 2",
+        slug: "sss15-king-khushru-cosroe-i-nosherwan-adel-531-579-part-2",
+      },
+      {
+        title: "SSS 15. King Khushru / Nosherwan Ādel — Part 1",
+        slug: "sss15-king-khushru-cosroe-i-nosherwan-adel-531-579-part-i",
+      },
+      {
+        title: "SSS 14. Kings Balāsh, Kobād I and Jamasp",
+        slug: "sss14-kings-balash-palash-484-487-kobad-i-487-496-498-591-and-jamasp-496-498",
+      },
+      {
+        title: "SSS 13. Kings Yazdezard II, Hormazd III & Piruz I",
+        slug: "sss13-kings-yazdezard-ii-440-457-hormazd-iii-457-458-piruz-i-458-484",
+      },
+      {
+        title: "SSS 12. King Behram V, Behram-gur — Part 4",
+        slug: "sss12-king-behram-v-behram-gur-419-439-part-4-concluded",
+      },
+      {
+        title: "SSS 11. King Behram V, Behram-gur — Part 3",
+        slug: "sss11-king-behram-v-behram-gur-part-3",
+      },
+      {
+        title: "SSS 10. King Behram V, Behram-gur — Part 2",
+        slug: "sss10-king-behram-v-behram-gur-part-2",
+      },
+      {
+        title: "SSS 9. King Behram V, Behram-gur — Part 1",
+        slug: "sss9-king-behram-v-behram-gur-part-1",
+      },
+      {
+        title: "SSS 8. Yazdezerd I (Athil) and 3 kings before him",
+        slug: "sss7-yazdezerd-i-athil-and-3-kings-before-him",
+      },
+      {
+        title: "SSS 7. Shahpur II, The Great — Part 2",
+        slug: "sss6-shahpur-ii-the-great-part-2",
+      },
+      {
+        title: "SSS 6. Shahpur II, The Great — Part 1",
+        slug: "sss6-shahpur-ii-the-great-1",
+      },
+      {
+        title: "SSS 5. Shahpur I",
+        slug: "sss5-shahpur-i",
+      },
+      {
+        title: "SSS 4. Ardeshir Bābekān — Part 3",
+        slug: "sss4-ardeshir-babekan-part-3-concluded",
+      },
+      {
+        title: "SSS 3. Ardeshir Bābekān — Part 2",
+        slug: "sss3-ardeshir-babekanpart-2",
+      },
+      {
+        title: "SSS 2. Ardeshir Bābekān — Part 1",
+        slug: "sss2-ardeshir-babekan-papakan-226-240-ce",
+      },
+      {
+        title: "SSS 1. Sasanian Dynasty (224-651 CE)",
+        slug: "sss1-sasanian-dynasty-224-651-ce",
       },
     ],
   },

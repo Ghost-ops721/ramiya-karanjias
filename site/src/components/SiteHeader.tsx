@@ -4,10 +4,15 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { LogoMark } from "@/components/LogoMark";
 import { btnOutline, btnSolid, btnSolidSm } from "@/lib/buttons";
-import { sections } from "@/lib/nav";
-import { site } from "@/lib/site";
+import type { Section } from "@/lib/nav";
 
-export function SiteHeader() {
+export function SiteHeader({
+  sections,
+  contactEmail,
+}: {
+  sections: Section[];
+  contactEmail: string;
+}) {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -32,7 +37,7 @@ export function SiteHeader() {
           <Link href="/article/about" className="font-semibold text-[#161410] no-underline hover:text-[#6b2d1a]">
             About
           </Link>
-          <a href={`mailto:${site.contact.email}`} className={btnSolidSm}>
+          <a href={`mailto:${contactEmail}`} className={btnSolidSm}>
             Email Dr. Karanjia
           </a>
         </nav>
@@ -63,11 +68,8 @@ export function SiteHeader() {
             <Link href="/article/about" onClick={() => setOpen(false)} className="font-semibold text-[#161410] no-underline">
               About
             </Link>
-            <a href={`mailto:${site.contact.email}`} className={`${btnSolid} mt-1`}>
+            <a href={`mailto:${contactEmail}`} className={`${btnSolid} mt-1`}>
               Email Dr. Karanjia
-            </a>
-            <a href={`tel:${site.contact.phoneTel}`} className={btnOutline}>
-              Call {site.contact.phoneDisplay}
             </a>
           </div>
           <p className="kicker mb-2">Sections</p>

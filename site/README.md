@@ -1,36 +1,33 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Ramiyar Karanjia
 
-## Getting Started
+Next.js redesign of [ramiyarkaranjia.com](https://ramiyarkaranjia.com/) — calm newspaper layout, large type for older readers. Content is served from **Firebase Firestore** (with local Markdown as seed/fallback).
 
-First, run the development server:
+## Run
 
 ```bash
+cd site
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Admin (edit content)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. Open [http://localhost:3000/admin](http://localhost:3000/admin)
+2. Sign in with an allowlisted editor account
+3. Edit articles, section navigation, or site settings and Save
 
-## Learn More
+Allowlisted emails are set in `ADMIN_EMAILS` / `NEXT_PUBLIC_ADMIN_EMAILS` (currently `ncarnac@gmail.com` and `ramiyark@gmail.com`). Temporary passwords (local only) are in `.admin-credentials.local` — change them after first login.
 
-To learn more about Next.js, take a look at the following resources:
+## Firebase
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Project: `ramiyar-karanjia` (Spark / free). Auth: email/password. Rules: public read; write only for allowlisted admins.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+npm run seed           # re-import Markdown + nav into Firestore
+npm run create-admins  # create/update Auth users from .admin-credentials.local
+npx firebase-tools@latest deploy --only firestore,auth
+```
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Env vars live in `.env.local` (not committed). For Vercel, copy the same `NEXT_PUBLIC_FIREBASE_*`, `FIREBASE_ADMIN_*`, and `ADMIN_EMAILS` values into the project settings.

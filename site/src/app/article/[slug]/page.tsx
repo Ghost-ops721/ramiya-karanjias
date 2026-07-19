@@ -5,17 +5,20 @@ import { ArticleBody } from "@/components/ArticleBody";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { CtaBar } from "@/components/CtaBar";
 import { getArticle, getArticleSlugs } from "@/lib/content";
-import { breadcrumbsForSlug, findSectionForSlug } from "@/lib/nav";
+import { breadcrumbsForSlug, findSectionForSlug } from "@/lib/nav-data";
 
 type Props = { params: Promise<{ slug: string }> };
 
-export function generateStaticParams() {
-  return getArticleSlugs().map((slug) => ({ slug }));
+export const revalidate = 60;
+
+export async function generateStaticParams() {
+  const slugs = await getArticleSlugs();
+  return slugs.map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const article = getArticle(slug);
+  const article = await getArticle(slug);
   if (!article) return {};
   return {
     title: article.title,
@@ -25,11 +28,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function ArticlePage({ params }: Props) {
   const { slug } = await params;
-  const article = getArticle(slug);
+  const article = await getArticle(slug);
   if (!article) notFound();
 
-  const section = findSectionForSlug(slug);
-  const crumbs = breadcrumbsForSlug(slug);
+  const section = await findSectionForSlug(slug);
+  const crumbs = await breadcrumbsForSlug(slug);
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-10">

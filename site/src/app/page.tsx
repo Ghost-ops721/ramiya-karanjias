@@ -4,21 +4,48 @@ import { CtaBar } from "@/components/CtaBar";
 import { Masthead } from "@/components/Masthead";
 import { btnOutline, btnSolid } from "@/lib/buttons";
 import { getArticle, getArticlesBySlugs } from "@/lib/content";
-import { homeFeatured, sections } from "@/lib/nav";
+import { getHomeFeatured, getSections } from "@/lib/nav-data";
+import { getSiteSettings } from "@/lib/site-data";
 
-export default function HomePage() {
-  const featured = getArticlesBySlugs(homeFeatured);
+export const revalidate = 60;
+
+export default async function HomePage() {
+  const [homeFeatured, sections, settings] = await Promise.all([
+    getHomeFeatured(),
+    getSections(),
+    getSiteSettings(),
+  ]);
+  const featured = await getArticlesBySlugs(homeFeatured);
   const lead = featured[0];
   const rest = featured.slice(1);
-  const latestSeries = getArticle(
+  const latestSeries = await getArticle(
     "sss-41-yazdezerd-iii-yazdezerd-sheheryar-the-last-sasanian-emperor-part-4",
   );
+  const linkWords = settings.linkWords ?? [];
 
   return (
     <div className="fade-mount pb-16">
-      <Masthead />
+      <Masthead name={settings.name} tagline={settings.tagline} />
 
       <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
+        <section className="mb-10 border-b border-rule pb-8">
+          <p className="kicker mb-3">Explore more about</p>
+          <p className="text-[1.1rem] leading-relaxed text-ink-soft sm:text-[1.15rem]">
+            {linkWords.map((word, index) => (
+              <span key={word.label}>
+                {index > 0 ? ", " : null}
+                <Link
+                  href={word.href}
+                  className="font-semibold text-[#1f3d5c] no-underline hover:text-[#6b2d1a]"
+                >
+                  {word.label}
+                </Link>
+              </span>
+            ))}
+            .
+          </p>
+        </section>
+
         <div className="mb-10 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-[1.15rem] text-ink-soft">
             Large, clear type. Simple paths. Start with a section below.
@@ -86,7 +113,11 @@ export default function HomePage() {
           </div>
         </section>
 
-        <CtaBar />
+        <CtaBar
+          contactName={settings.contact.name}
+          contactEmail={settings.contact.email}
+          contactAddress={settings.contact.address}
+        />
       </div>
     </div>
   );
