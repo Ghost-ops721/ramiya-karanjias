@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { AdminHistoryPanel } from "@/components/admin/AdminHistoryPanel";
 import { useAdminAuth } from "@/components/admin/AdminAuthProvider";
 import { useEditMode } from "@/components/admin/EditModeProvider";
 import { saveSiteSettings } from "@/components/admin/saveContent";
@@ -12,7 +13,7 @@ import {
   type TextSizePreset,
 } from "@/lib/theme";
 
-/** Quiet bar + Look panel + Saved wink toast. */
+/** Quiet bar + Look panel + History panel + Saved wink toast. */
 export function AdminToolbar() {
   const { user, loading, logout } = useAdminAuth();
   const {
@@ -21,9 +22,11 @@ export function AdminToolbar() {
     wink,
     clearWink,
     themeOpen,
+    historyOpen,
     themeLive,
     settings,
     setThemeOpen,
+    setHistoryOpen,
     setTheme,
     setBusy,
     setStatus,
@@ -71,6 +74,13 @@ export function AdminToolbar() {
             className="text-[1.05rem] font-semibold text-ink underline-offset-4 hover:underline"
           >
             {themeOpen ? "Close look" : "Look of the page"}
+          </button>
+          <button
+            type="button"
+            onClick={() => setHistoryOpen(!historyOpen)}
+            className="text-[1.05rem] font-semibold text-ink underline-offset-4 hover:underline"
+          >
+            {historyOpen ? "Close history" : "History"}
           </button>
           <button
             type="button"
@@ -165,6 +175,8 @@ export function AdminToolbar() {
             </div>
           </div>
         ) : null}
+
+        {historyOpen ? <AdminHistoryPanel /> : null}
       </div>
 
       {wink ? (

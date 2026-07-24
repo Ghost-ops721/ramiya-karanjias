@@ -37,6 +37,20 @@ export type SiteSettings = {
   theme?: SiteTheme;
 };
 
+export type RevisionKind = "article" | "settings" | "nav";
+export type RevisionAction = "save" | "rollback";
+
+export type RevisionDoc = {
+  id: string;
+  kind: RevisionKind;
+  targetId: string;
+  label: string;
+  data: Record<string, unknown>;
+  createdAt: Date | null;
+  createdBy: string;
+  action: RevisionAction;
+};
+
 export function excerptFrom(body: string, title: string): string {
   const plain = body
     .replace(/^#+\s.*$/gm, "")
