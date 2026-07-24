@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Literata } from "next/font/google";
-import { SiteFooter } from "@/components/SiteFooter";
-import { SiteHeader } from "@/components/SiteHeader";
+import { AdminShell } from "@/components/admin/AdminShell";
+import { SiteChrome } from "@/components/SiteChrome";
 import { getSections } from "@/lib/nav-data";
 import { getSiteSettings } from "@/lib/site-data";
 import "./globals.css";
@@ -37,17 +37,11 @@ export default async function RootLayout({
   return (
     <html lang="en" className={`${literata.variable} h-full`}>
       <body className="flex min-h-full flex-col font-body text-ink antialiased">
-        <SiteHeader
-          sections={sections}
-          contactEmail={settings.contact.email}
-        />
-        <main className="flex-1">{children}</main>
-        <SiteFooter
-          name={settings.name}
-          tagline={settings.tagline}
-          contactEmail={settings.contact.email}
-          contactName={settings.contact.name}
-        />
+        <AdminShell settings={settings} sections={sections}>
+          <SiteChrome sections={sections} settings={settings}>
+            {children}
+          </SiteChrome>
+        </AdminShell>
       </body>
     </html>
   );

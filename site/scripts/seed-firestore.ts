@@ -10,6 +10,7 @@ import { getFirestore, FieldValue } from "firebase-admin/firestore";
 import { sections, homeFeatured } from "../src/lib/nav";
 import { site, linkWords } from "../src/lib/site";
 import { excerptFrom, normalizeMarkdown } from "../src/lib/cms-types";
+import { DEFAULT_THEME } from "../src/lib/theme";
 
 const root = process.cwd();
 const sa = JSON.parse(readFileSync(join(root, "service-account.json"), "utf8"));
@@ -78,6 +79,7 @@ async function main() {
       tagline: site.tagline,
       contact: { ...site.contact },
       linkWords: [...linkWords],
+      theme: { ...DEFAULT_THEME },
       updatedAt: FieldValue.serverTimestamp(),
       updatedBy: "seed",
     },

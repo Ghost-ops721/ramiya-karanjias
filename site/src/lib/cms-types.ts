@@ -22,6 +22,8 @@ export type Section = {
   items: NavItem[];
 };
 
+import type { SiteTheme } from "@/lib/theme";
+
 export type SiteSettings = {
   name: string;
   tagline: string;
@@ -32,6 +34,7 @@ export type SiteSettings = {
   };
   linkWords?: { label: string; href: string }[];
   homeFeatured?: string[];
+  theme?: SiteTheme;
 };
 
 export function excerptFrom(body: string, title: string): string {

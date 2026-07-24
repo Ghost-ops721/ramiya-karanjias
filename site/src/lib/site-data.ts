@@ -4,6 +4,7 @@ import {
 } from "@/lib/site-static";
 import { adminDb, isFirebaseConfigured } from "@/lib/firebase-admin";
 import type { SiteSettings } from "@/lib/cms-types";
+import { DEFAULT_THEME, normalizeTheme } from "@/lib/theme";
 
 export type { SiteSettings };
 
@@ -26,6 +27,7 @@ export async function getSiteSettings(): Promise<SiteSettings> {
           linkWords: Array.isArray(data.linkWords)
             ? data.linkWords
             : [...fallbackLinkWords],
+          theme: normalizeTheme(data.theme),
         };
       }
     } catch (err) {
@@ -37,5 +39,6 @@ export async function getSiteSettings(): Promise<SiteSettings> {
     tagline: fallbackSite.tagline,
     contact: { ...fallbackSite.contact },
     linkWords: [...fallbackLinkWords],
+    theme: { ...DEFAULT_THEME },
   };
 }

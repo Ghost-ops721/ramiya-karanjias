@@ -28,13 +28,13 @@ export function SiteHeader({
         <LogoMark />
 
         <nav className="hidden items-center gap-5 text-[1.05rem] md:flex" aria-label="Main">
-          <Link href="/topics" className="font-semibold text-[#161410] no-underline hover:text-[#6b2d1a]">
+          <Link href="/topics" className="font-semibold text-ink no-underline hover:text-accent">
             Search topics
           </Link>
-          <Link href="/section/faqs" className="font-semibold text-[#161410] no-underline hover:text-[#6b2d1a]">
+          <Link href="/section/faqs" className="font-semibold text-ink no-underline hover:text-accent">
             FAQs
           </Link>
-          <Link href="/article/about" className="font-semibold text-[#161410] no-underline hover:text-[#6b2d1a]">
+          <Link href="/article/about" className="font-semibold text-ink no-underline hover:text-accent">
             About
           </Link>
           <a href={`mailto:${contactEmail}`} className={btnSolidSm}>
@@ -59,13 +59,13 @@ export function SiteHeader({
           className="border-t border-rule bg-paper px-4 py-4 md:hidden"
         >
           <div className="mb-4 flex flex-col gap-3 text-[1.15rem]">
-            <Link href="/topics" onClick={() => setOpen(false)} className="font-semibold text-[#161410] no-underline">
+            <Link href="/topics" onClick={() => setOpen(false)} className="font-semibold text-ink no-underline">
               Search topics
             </Link>
-            <Link href="/section/faqs" onClick={() => setOpen(false)} className="font-semibold text-[#161410] no-underline">
+            <Link href="/section/faqs" onClick={() => setOpen(false)} className="font-semibold text-ink no-underline">
               FAQs
             </Link>
-            <Link href="/article/about" onClick={() => setOpen(false)} className="font-semibold text-[#161410] no-underline">
+            <Link href="/article/about" onClick={() => setOpen(false)} className="font-semibold text-ink no-underline">
               About
             </Link>
             <a href={`mailto:${contactEmail}`} className={`${btnSolid} mt-1`}>
@@ -79,7 +79,7 @@ export function SiteHeader({
                 <Link
                   href={`/section/${s.id}`}
                   onClick={() => setOpen(false)}
-                  className="text-[#161410] no-underline"
+                  className="text-ink no-underline"
                 >
                   {s.title}
                 </Link>

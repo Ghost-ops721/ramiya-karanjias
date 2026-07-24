@@ -16,7 +16,7 @@ Open [http://localhost:3000](http://localhost:3000).
 
 1. Open [http://localhost:3000/admin](http://localhost:3000/admin)
 2. Sign in with an allowlisted editor account
-3. Edit articles, section navigation, or site settings and Save
+3. You see the normal website — press **Edit**, change the text boxes (and optionally **Colours & size**), then **Save**
 
 Allowlisted emails are set in `ADMIN_EMAILS` / `NEXT_PUBLIC_ADMIN_EMAILS` (currently `ncarnac@gmail.com` and `ramiyark@gmail.com`). Temporary passwords (local only) are in `.admin-credentials.local` — change them after first login.
 

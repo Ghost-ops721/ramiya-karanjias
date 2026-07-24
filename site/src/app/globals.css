@@ -10,6 +10,7 @@
   --accent-soft: #8a3d28;
   --link: #1f3d5c;
   --focus: #1f3d5c;
+  --body-size: 1.125rem;
 }
 
 @theme inline {
@@ -40,7 +41,7 @@ body {
     var(--paper);
   color: var(--ink);
   font-family: var(--font-body), Georgia, "Times New Roman", serif;
-  font-size: 1.125rem;
+  font-size: var(--body-size);
   line-height: 1.7;
   -webkit-font-smoothing: antialiased;
 }
