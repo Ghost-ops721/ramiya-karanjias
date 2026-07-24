@@ -9,7 +9,7 @@ import { InlineArea, InlineText } from "@/components/admin/InlineEdit";
 import { useAdminAuth } from "@/components/admin/AdminAuthProvider";
 import { useEditMode } from "@/components/admin/EditModeProvider";
 import { patchNav } from "@/components/admin/saveContent";
-import { useAdminFetch } from "@/components/admin/useAdminFetch";
+import { useRevalidateAfterSave } from "@/components/admin/useAdminFetch";
 import type { Article } from "@/lib/content";
 import type { NavItem } from "@/lib/nav";
 
@@ -23,7 +23,7 @@ type Props = {
 export function EditableSection({ sectionId, articles }: Props) {
   const { user } = useAdminAuth();
   const { settings, sections, activeBlockId } = useEditMode();
-  const adminFetch = useAdminFetch();
+  const revalidate = useRevalidateAfterSave();
   const section = sections.find((s) => s.id === sectionId);
 
   const [title, setTitle] = useState(section?.title ?? "");
@@ -69,11 +69,8 @@ export function EditableSection({ sectionId, articles }: Props) {
             }),
             user.email || user.uid,
           );
-          await adminFetch("/api/revalidate", {
-            method: "POST",
-            body: JSON.stringify({
-              paths: ["/", `/section/${sectionId}`, "/topics"],
-            }),
+          await revalidate({
+            paths: ["/", `/section/${sectionId}`, "/topics"],
           });
           return { sections: next };
         }}

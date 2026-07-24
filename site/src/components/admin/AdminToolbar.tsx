@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import { useAdminAuth } from "@/components/admin/AdminAuthProvider";
 import { useEditMode } from "@/components/admin/EditModeProvider";
 import { saveSiteSettings } from "@/components/admin/saveContent";
-import { useAdminFetch } from "@/components/admin/useAdminFetch";
+import { useRevalidateAfterSave } from "@/components/admin/useAdminFetch";
 import { btnOutline, btnSolid } from "@/lib/buttons";
 import {
   TEXT_SIZE_LABELS,
@@ -31,7 +31,7 @@ export function AdminToolbar() {
     setStatus,
     afterSave,
   } = useEditMode();
-  const adminFetch = useAdminFetch();
+  const revalidate = useRevalidateAfterSave();
   const onHistoryPage = pathname === "/admin/history";
 
   useEffect(() => {
@@ -48,10 +48,7 @@ export function AdminToolbar() {
     try {
       const next = { theme: themeLive };
       const saved = await saveSiteSettings(next, user!.email || user!.uid);
-      await adminFetch("/api/revalidate", {
-        method: "POST",
-        body: JSON.stringify({ paths: ["/", "/topics"] }),
-      });
+      await revalidate({ paths: ["/", "/topics"] });
       afterSave({ settings: saved });
     } catch (err) {
       console.error(err);

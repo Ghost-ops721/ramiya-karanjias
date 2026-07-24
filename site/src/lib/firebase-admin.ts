@@ -1,5 +1,6 @@
 import { initializeApp, getApps, cert, type App } from "firebase-admin/app";
 import { getFirestore } from "firebase-admin/firestore";
+import { createRemoteJWKSet, jwtVerify, type JWTPayload } from "jose";
 
 function privateKeyFromEnv(): string | undefined {
   const raw = process.env.FIREBASE_ADMIN_PRIVATE_KEY;
@@ -33,7 +34,11 @@ export function adminDb() {
 }
 
 export function adminEmails(): string[] {
-  return (process.env.ADMIN_EMAILS || "")
+  return (
+    process.env.ADMIN_EMAILS ||
+    process.env.NEXT_PUBLIC_ADMIN_EMAILS ||
+    ""
+  )
     .split(",")
     .map((e) => e.trim().toLowerCase())
     .filter(Boolean);
@@ -41,17 +46,42 @@ export function adminEmails(): string[] {
 
 export function isAdminEmail(email: string | null | undefined): boolean {
   if (!email) return false;
-  return adminEmails().includes(email.toLowerCase());
+  const allowed = adminEmails();
+  if (allowed.length === 0) return false;
+  return allowed.includes(email.toLowerCase());
 }
 
-/** Lazy-load Auth to avoid jose/jwks-rsa ESM crash on Vercel serverless. */
-export async function verifyAdminIdToken(idToken: string) {
-  const { getAuth } = await import("firebase-admin/auth");
-  const decoded = await getAuth(getAdminApp()).verifyIdToken(idToken);
-  if (!isAdminEmail(decoded.email)) {
+function firebaseProjectId(): string {
+  const projectId =
+    process.env.FIREBASE_ADMIN_PROJECT_ID ||
+    process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID;
+  if (!projectId) {
+    throw new Error("Missing FIREBASE_ADMIN_PROJECT_ID");
+  }
+  return projectId;
+}
+
+/** Firebase ID-token JWKS — avoid firebase-admin/auth (jose ESM crash on Vercel). */
+const firebaseJwks = createRemoteJWKSet(
+  new URL(
+    "https://www.googleapis.com/service_accounts/v1/jwk/securetoken@system.gserviceaccount.com",
+  ),
+);
+
+export async function verifyAdminIdToken(
+  idToken: string,
+): Promise<JWTPayload & { email?: string }> {
+  const projectId = firebaseProjectId();
+  const { payload } = await jwtVerify(idToken, firebaseJwks, {
+    issuer: `https://securetoken.google.com/${projectId}`,
+    audience: projectId,
+  });
+
+  const email = typeof payload.email === "string" ? payload.email : undefined;
+  if (!isAdminEmail(email)) {
     throw new Error("Not an allowlisted admin");
   }
-  return decoded;
+  return { ...payload, email };
 }
 
 export function isFirebaseConfigured(): boolean {

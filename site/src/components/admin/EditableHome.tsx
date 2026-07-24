@@ -14,7 +14,7 @@ import {
   saveSiteSettings,
   saveArticleDoc,
 } from "@/components/admin/saveContent";
-import { useAdminFetch } from "@/components/admin/useAdminFetch";
+import { useRevalidateAfterSave } from "@/components/admin/useAdminFetch";
 import { btnOutline, btnSolid } from "@/lib/buttons";
 import type { Article } from "@/lib/content";
 import type { SiteSettings } from "@/lib/cms-types";
@@ -49,7 +49,7 @@ export function EditableHome({
 }: Props) {
   const { user } = useAdminAuth();
   const { settings, sections, activeBlockId } = useEditMode();
-  const adminFetch = useAdminFetch();
+  const revalidate = useRevalidateAfterSave();
 
   const [name, setName] = useState(settings.name);
   const [tagline, setTagline] = useState(settings.tagline);
@@ -127,10 +127,7 @@ export function EditableHome({
   async function saveSettingsPatch(patch: Partial<SiteSettings>) {
     if (!user) throw new Error("Not signed in");
     const saved = await saveSiteSettings(patch, user.email || user.uid);
-    await adminFetch("/api/revalidate", {
-      method: "POST",
-      body: JSON.stringify({ paths: ["/", "/topics"] }),
-    });
+    await revalidate({ paths: ["/", "/topics"] });
     return { settings: saved };
   }
 
@@ -152,12 +149,9 @@ export function EditableHome({
       }),
       user.email || user.uid,
     );
-    await adminFetch("/api/revalidate", {
-      method: "POST",
-      body: JSON.stringify({
-        slug: article.slug,
-        paths: ["/", "/topics"],
-      }),
+    await revalidate({
+      slug: article.slug,
+      paths: ["/", "/topics"],
     });
     const updated: Article = { ...article, title: trimmed };
     pendingFeaturedRef.current = {
@@ -375,11 +369,8 @@ export function EditableHome({
                       }),
                       user.email || user.uid,
                     );
-                    await adminFetch("/api/revalidate", {
-                      method: "POST",
-                      body: JSON.stringify({
-                        paths: ["/", `/section/${section.id}`, "/topics"],
-                      }),
+                    await revalidate({
+                      paths: ["/", `/section/${section.id}`, "/topics"],
                     });
                     return { sections: next };
                   }}

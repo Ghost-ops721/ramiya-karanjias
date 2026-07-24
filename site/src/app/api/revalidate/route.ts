@@ -37,6 +37,10 @@ export async function POST(request: Request) {
     return NextResponse.json({ revalidated: true, paths: [...paths] });
   } catch (err) {
     console.error("revalidate failed:", err);
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    const message = err instanceof Error ? err.message : "Forbidden";
+    return NextResponse.json(
+      { error: "Forbidden", detail: message },
+      { status: 403 },
+    );
   }
 }

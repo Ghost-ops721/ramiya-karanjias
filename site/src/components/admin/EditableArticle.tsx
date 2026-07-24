@@ -13,7 +13,7 @@ import {
   patchNav,
   saveArticleDoc,
 } from "@/components/admin/saveContent";
-import { useAdminFetch } from "@/components/admin/useAdminFetch";
+import { useRevalidateAfterSave } from "@/components/admin/useAdminFetch";
 import { excerptFrom, normalizeMarkdown } from "@/lib/cms-types";
 import type { Article } from "@/lib/content";
 import type { Section } from "@/lib/nav";
@@ -43,7 +43,7 @@ function renameNavItem(sections: Section[], slug: string, title: string): Sectio
 export function EditableArticle({ article, section, crumbs }: Props) {
   const { user } = useAdminAuth();
   const { settings, sections, activeBlockId } = useEditMode();
-  const adminFetch = useAdminFetch();
+  const revalidate = useRevalidateAfterSave();
   const [committed, setCommitted] = useState(article);
   const [title, setTitle] = useState(article.title);
   const [content, setContent] = useState(article.content);
@@ -101,12 +101,9 @@ export function EditableArticle({ article, section, crumbs }: Props) {
               }),
               user.email || user.uid,
             );
-            await adminFetch("/api/revalidate", {
-              method: "POST",
-              body: JSON.stringify({
-                slug: article.slug,
-                paths: ["/", "/topics"],
-              }),
+            await revalidate({
+              slug: article.slug,
+              paths: ["/", "/topics"],
             });
             const normalized = normalizeMarkdown(content);
             const next: Article = {

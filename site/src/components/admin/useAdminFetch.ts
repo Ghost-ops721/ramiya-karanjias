@@ -24,8 +24,29 @@ export async function adminFetch(
   return res;
 }
 
+/** Cache bust after a successful Firestore write — never fail the save itself. */
+export async function revalidateAfterSave(
+  getIdToken: () => Promise<string | null>,
+  body: { paths?: string[]; slug?: string },
+) {
+  try {
+    await adminFetch(getIdToken, "/api/revalidate", {
+      method: "POST",
+      body: JSON.stringify(body),
+    });
+  } catch (err) {
+    console.error("revalidate after save failed:", err);
+  }
+}
+
 export function useAdminFetch() {
   const { getIdToken } = useAdminAuth();
   return (input: RequestInfo | URL, init?: RequestInit) =>
     adminFetch(getIdToken, input, init);
+}
+
+export function useRevalidateAfterSave() {
+  const { getIdToken } = useAdminAuth();
+  return (body: { paths?: string[]; slug?: string }) =>
+    revalidateAfterSave(getIdToken, body);
 }

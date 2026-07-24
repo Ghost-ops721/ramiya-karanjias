@@ -11,7 +11,7 @@ import {
   restoreRevision,
   revalidatePathsFor,
 } from "@/components/admin/saveContent";
-import { useAdminFetch } from "@/components/admin/useAdminFetch";
+import { useRevalidateAfterSave } from "@/components/admin/useAdminFetch";
 import { btnOutline, btnSolid } from "@/lib/buttons";
 import type { RevisionDoc } from "@/lib/cms-types";
 import {
@@ -58,7 +58,7 @@ function toInputDate(date: Date): string {
 export function AdminHistoryPage() {
   const { user, loading: authLoading } = useAdminAuth();
   const { busy, setBusy, setStatus, afterSave } = useEditMode();
-  const adminFetch = useAdminFetch();
+  const revalidate = useRevalidateAfterSave();
   const router = useRouter();
   const [revisions, setRevisions] = useState<RevisionDoc[]>([]);
   const [loading, setLoading] = useState(true);
@@ -187,10 +187,7 @@ export function AdminHistoryPage() {
     try {
       const result = await restoreRevision(rev.id, user.email || user.uid);
       const reval = revalidatePathsFor(result.kind, result.targetId);
-      await adminFetch("/api/revalidate", {
-        method: "POST",
-        body: JSON.stringify(reval),
-      });
+      await revalidate(reval);
       setPendingRestore(null);
       closeView();
       afterSave({
