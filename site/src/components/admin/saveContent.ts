@@ -184,6 +184,15 @@ function toDate(value: unknown): Date | null {
   return null;
 }
 
+export async function loadLiveDoc(
+  kind: RevisionKind,
+  targetId: string,
+): Promise<Record<string, unknown> | null> {
+  const snap = await getDoc(liveDocRef(kind, targetId));
+  if (!snap.exists()) return null;
+  return stripMeta(snap.data());
+}
+
 export async function listRevisions(max = 100): Promise<RevisionDoc[]> {
   const q = query(
     collection(clientDb(), "revisions"),
