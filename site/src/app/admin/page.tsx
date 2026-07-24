@@ -46,8 +46,7 @@ export default function AdminLoginPage() {
       <p className="kicker mb-2">Admin</p>
       <h1 className="font-display text-3xl text-ink">Sign in</h1>
       <p className="mt-3 text-[1.15rem] text-ink-soft">
-        After you sign in, you will see the normal website. Click the pencil on any
-        section to edit just that part, then Save.
+        Sign in, then tap a pencil on the page.
       </p>
       <form onSubmit={onSubmit} className="mt-8 space-y-4">
         <label className="block">

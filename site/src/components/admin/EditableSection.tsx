@@ -5,15 +5,11 @@ import { useEffect, useState } from "react";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { CtaBar } from "@/components/CtaBar";
 import { EditableBlock } from "@/components/admin/EditableBlock";
-import { EditField } from "@/components/admin/EditFields";
+import { InlineArea, InlineText } from "@/components/admin/InlineEdit";
 import { useAdminAuth } from "@/components/admin/AdminAuthProvider";
 import { useEditMode } from "@/components/admin/EditModeProvider";
-import {
-  loadHomeFeatured,
-  saveNav,
-} from "@/components/admin/saveContent";
+import { loadHomeFeatured, saveNav } from "@/components/admin/saveContent";
 import { useAdminFetch } from "@/components/admin/useAdminFetch";
-import { btnOutline, btnSolid } from "@/lib/buttons";
 import type { Article } from "@/lib/content";
 import type { NavItem } from "@/lib/nav";
 
@@ -32,16 +28,12 @@ export function EditableSection({ sectionId, articles }: Props) {
 
   const [title, setTitle] = useState(section?.title ?? "");
   const [blurb, setBlurb] = useState(section?.blurb ?? "");
-  const [items, setItems] = useState<NavItem[]>(section?.items ?? []);
 
   useEffect(() => {
     if (!section) return;
     if (activeBlockId === "section-header") {
       setTitle(section.title);
       setBlurb(section.blurb);
-    }
-    if (activeBlockId === "section-items") {
-      setItems(section.items.map((i) => ({ ...i })));
     }
   }, [activeBlockId, section]);
 
@@ -51,22 +43,6 @@ export function EditableSection({ sectionId, articles }: Props) {
         Section not found.
       </div>
     );
-  }
-
-  async function saveSection(nextSection: typeof section) {
-    if (!user || !nextSection) throw new Error("Nothing to save");
-    const next = sections.map((s) =>
-      s.id === sectionId ? nextSection : s,
-    );
-    const featured = await loadHomeFeatured();
-    await saveNav(next, featured, user.email || user.uid);
-    await adminFetch("/api/revalidate", {
-      method: "POST",
-      body: JSON.stringify({
-        paths: ["/", `/section/${sectionId}`, "/topics"],
-      }),
-    });
-    return { sections: next };
   }
 
   return (
@@ -80,24 +56,41 @@ export function EditableSection({ sectionId, articles }: Props) {
 
       <EditableBlock
         id="section-header"
-        label="Section title & description"
-        onSave={() =>
-          saveSection({
-            ...section,
-            title: title.trim(),
-            blurb: blurb.trim(),
-          })
-        }
+        label="section title"
+        onSave={async () => {
+          if (!user) throw new Error("Not signed in");
+          const next = sections.map((s) =>
+            s.id === sectionId
+              ? { ...s, title: title.trim(), blurb: blurb.trim() }
+              : s,
+          );
+          const featured = await loadHomeFeatured();
+          await saveNav(next, featured, user.email || user.uid);
+          await adminFetch("/api/revalidate", {
+            method: "POST",
+            body: JSON.stringify({
+              paths: ["/", `/section/${sectionId}`, "/topics"],
+            }),
+          });
+          return { sections: next };
+        }}
         editor={
-          <>
-            <EditField label="Section title" value={title} onChange={setTitle} />
-            <EditField
-              label="Short description"
-              value={blurb}
-              onChange={setBlurb}
-              rows={3}
+          <div>
+            <p className="kicker mb-3">Section</p>
+            <InlineText
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              aria-label="Section title"
+              className="font-display text-[clamp(1.9rem,4vw,2.8rem)] text-ink"
             />
-          </>
+            <InlineArea
+              value={blurb}
+              onChange={(e) => setBlurb(e.target.value)}
+              aria-label="Short description"
+              rows={3}
+              className="mt-4 max-w-2xl text-[1.2rem] leading-relaxed text-ink-soft"
+            />
+          </div>
         }
       >
         <div>
@@ -113,103 +106,34 @@ export function EditableSection({ sectionId, articles }: Props) {
 
       <hr className="paper-rule my-8" />
 
-      <EditableBlock
-        id="section-items"
-        label="Articles in this section"
-        onSave={() =>
-          saveSection({
-            ...section,
-            items: items
-              .map((i) => ({
-                title: i.title.trim(),
-                slug: i.slug.trim(),
-              }))
-              .filter((i) => i.title && i.slug),
-          })
-        }
-        editor={
-          <>
-            {items.map((item, index) => (
-              <div
-                key={index}
-                className="space-y-3 border border-rule bg-paper p-4"
+      <ol className="space-y-6">
+        {articles.map(({ item, article }, index) => (
+          <li key={item.slug} className="border-b border-rule pb-6">
+            <p className="text-[0.95rem] text-ink-soft">Article {index + 1}</p>
+            <h2 className="mt-1 font-display text-[1.45rem] text-ink sm:text-[1.65rem]">
+              <Link
+                href={`/article/${item.slug}`}
+                className="text-ink no-underline hover:text-accent"
               >
-                <EditField
-                  label="Title shown in the list"
-                  value={item.title}
-                  onChange={(t) =>
-                    setItems((list) =>
-                      list.map((it, i) =>
-                        i === index ? { ...it, title: t } : it,
-                      ),
-                    )
-                  }
-                />
-                <EditField
-                  label="Page name (the part after /article/)"
-                  value={item.slug}
-                  onChange={(slug) =>
-                    setItems((list) =>
-                      list.map((it, i) =>
-                        i === index ? { ...it, slug } : it,
-                      ),
-                    )
-                  }
-                />
-                <button
-                  type="button"
-                  className={`${btnOutline} text-lg`}
-                  onClick={() =>
-                    setItems((list) => list.filter((_, i) => i !== index))
-                  }
-                >
-                  Remove this article from the section
-                </button>
-              </div>
-            ))}
-            <button
-              type="button"
-              className={`${btnSolid} text-lg`}
-              onClick={() =>
-                setItems((list) => [...list, { title: "", slug: "" }])
-              }
-            >
-              Add an article to this section
-            </button>
-          </>
-        }
-      >
-        <ol className="space-y-6">
-          {articles.map(({ item, article }, index) => (
-            <li key={item.slug} className="border-b border-rule pb-6">
-              <p className="text-[0.95rem] text-ink-soft">
-                Article {index + 1}
+                {item.title}
+              </Link>
+            </h2>
+            {article ? (
+              <p className="mt-2 max-w-3xl text-[1.08rem] leading-relaxed text-ink-soft">
+                {article.excerpt}
               </p>
-              <h2 className="mt-1 font-display text-[1.45rem] text-ink sm:text-[1.65rem]">
-                <Link
-                  href={`/article/${item.slug}`}
-                  className="text-ink no-underline hover:text-accent"
-                >
-                  {item.title}
-                </Link>
-              </h2>
-              {article ? (
-                <p className="mt-2 max-w-3xl text-[1.08rem] leading-relaxed text-ink-soft">
-                  {article.excerpt}
-                </p>
-              ) : null}
-              <p className="mt-3">
-                <Link
-                  href={`/article/${item.slug}`}
-                  className="text-[1.05rem] font-semibold"
-                >
-                  Read this article →
-                </Link>
-              </p>
-            </li>
-          ))}
-        </ol>
-      </EditableBlock>
+            ) : null}
+            <p className="mt-3">
+              <Link
+                href={`/article/${item.slug}`}
+                className="text-[1.05rem] font-semibold"
+              >
+                Read this article →
+              </Link>
+            </p>
+          </li>
+        ))}
+      </ol>
 
       <div className="mt-10">
         <CtaBar

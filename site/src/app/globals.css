@@ -51,7 +51,7 @@ body {
   color: var(--ink);
 }
 
-:focus-visible:not(#topic-search):not(.admin-field) {
+:focus-visible:not(#topic-search):not(.admin-field):not(.inline-edit) {
   outline: 3px solid var(--focus);
   outline-offset: 3px;
 }
@@ -233,7 +233,90 @@ body {
   .fade-mount {
     animation: none;
   }
+  .saved-wink,
+  .saved-wink-eye {
+    animation: none;
+  }
   html {
     scroll-behavior: auto;
+  }
+}
+
+/* Calm inline edit — type where the words are; focus = bottom line only */
+.inline-edit {
+  appearance: none;
+  -webkit-appearance: none;
+  border: none !important;
+  border-bottom: 1.5px solid color-mix(in srgb, var(--rule) 70%, transparent) !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  -webkit-box-shadow: none !important;
+  outline: none !important;
+  caret-color: var(--ink);
+  transition: border-bottom-color 0.28s ease-in;
+}
+
+.inline-edit:hover {
+  border-bottom-color: color-mix(in srgb, var(--ink) 35%, var(--rule)) !important;
+}
+
+.inline-edit:focus,
+.inline-edit:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+  border: none !important;
+  border-bottom: 1.5px solid var(--ink) !important;
+  transition: border-bottom-color 0.28s ease-in;
+}
+
+.inline-edit:-webkit-autofill {
+  -webkit-text-fill-color: var(--ink) !important;
+  transition: background-color 99999s ease-out 0s;
+}
+
+/* Saved wink toast */
+.saved-wink {
+  animation: saved-wink-in 1.2s ease-out both;
+}
+
+.saved-wink-eye {
+  display: inline-block;
+  animation: saved-wink-eye 1.2s ease-in-out both;
+  color: var(--accent);
+}
+
+@keyframes saved-wink-in {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-8px) scale(0.96);
+  }
+  18% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
+  75% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-4px) scale(0.98);
+  }
+}
+
+@keyframes saved-wink-eye {
+  0%,
+  35% {
+    transform: scale(1) rotate(0deg);
+  }
+  45% {
+    transform: scale(1.25) rotate(-8deg);
+  }
+  55% {
+    transform: scale(1) rotate(0deg);
+  }
+  100% {
+    transform: scale(1);
   }
 }

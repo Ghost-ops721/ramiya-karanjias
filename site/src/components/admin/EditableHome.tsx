@@ -6,19 +6,21 @@ import { ArticleCard } from "@/components/ArticleCard";
 import { CtaBar } from "@/components/CtaBar";
 import { Masthead } from "@/components/Masthead";
 import { EditableBlock } from "@/components/admin/EditableBlock";
-import { EditField } from "@/components/admin/EditFields";
+import { InlineArea, InlineText } from "@/components/admin/InlineEdit";
 import { useAdminAuth } from "@/components/admin/AdminAuthProvider";
 import { useEditMode } from "@/components/admin/EditModeProvider";
 import {
   loadHomeFeatured,
   saveNav,
   saveSiteSettings,
+  saveArticleDoc,
 } from "@/components/admin/saveContent";
 import { useAdminFetch } from "@/components/admin/useAdminFetch";
 import { btnOutline, btnSolid } from "@/lib/buttons";
 import type { Article } from "@/lib/content";
 import type { SiteSettings } from "@/lib/cms-types";
 import type { Section } from "@/lib/nav";
+import { excerptFrom, normalizeMarkdown } from "@/lib/cms-types";
 
 type Props = {
   settings: SiteSettings;
@@ -29,7 +31,6 @@ type Props = {
 };
 
 export function EditableHome({
-  homeFeatured: serverFeatured,
   featured,
   latestSeries,
 }: Props) {
@@ -44,10 +45,14 @@ export function EditableHome({
   const [contactAddress, setContactAddress] = useState(
     settings.contact.address,
   );
-  const [linkWords, setLinkWords] = useState(settings.linkWords ?? []);
-  const [featuredText, setFeaturedText] = useState(serverFeatured.join("\n"));
   const [sectionDrafts, setSectionDrafts] = useState(
     sections.map((s) => ({ id: s.id, title: s.title, blurb: s.blurb })),
+  );
+  const [linkWords, setLinkWords] = useState(
+    () => (settings.linkWords ?? []).map((w) => ({ ...w })),
+  );
+  const [featuredTitles, setFeaturedTitles] = useState<Record<string, string>>(
+    {},
   );
 
   useEffect(() => {
@@ -63,15 +68,19 @@ export function EditableHome({
     if (activeBlockId === "explore") {
       setLinkWords((settings.linkWords ?? []).map((w) => ({ ...w })));
     }
-    if (activeBlockId === "featured") {
-      setFeaturedText(serverFeatured.join("\n"));
+    if (activeBlockId?.startsWith("article-")) {
+      const slug = activeBlockId.slice("article-".length);
+      const art = featured.find((a) => a.slug === slug) ?? latestSeries;
+      if (art && art.slug === slug) {
+        setFeaturedTitles((prev) => ({ ...prev, [slug]: art.title }));
+      }
     }
     if (activeBlockId?.startsWith("section-")) {
       setSectionDrafts(
         sections.map((s) => ({ id: s.id, title: s.title, blurb: s.blurb })),
       );
     }
-  }, [activeBlockId, settings, sections, serverFeatured]);
+  }, [activeBlockId, settings, sections, featured, latestSeries]);
 
   const lead = featured[0];
   const rest = featured.slice(1);
@@ -94,24 +103,103 @@ export function EditableHome({
     return { settings: next };
   }
 
+  async function saveArticleTitle(article: Article, title: string) {
+    if (!user) throw new Error("Not signed in");
+    await saveArticleDoc(
+      article.slug,
+      {
+        title: title.trim(),
+        content: article.content,
+        source: article.source ?? "",
+      },
+      user.email || user.uid,
+    );
+    await adminFetch("/api/revalidate", {
+      method: "POST",
+      body: JSON.stringify({
+        slug: article.slug,
+        paths: ["/", "/topics"],
+      }),
+    });
+  }
+
+  function FeaturedEditable({
+    article,
+    kicker,
+    large,
+  }: {
+    article: Article;
+    kicker?: string;
+    large?: boolean;
+  }) {
+    const draftTitle = featuredTitles[article.slug] ?? article.title;
+    return (
+      <EditableBlock
+        id={`article-${article.slug}`}
+        label={article.title}
+        onSave={async () => {
+          await saveArticleTitle(article, draftTitle);
+        }}
+        editor={
+          <div>
+            {kicker ? <p className="kicker mb-2">{kicker}</p> : null}
+            <InlineText
+              value={draftTitle}
+              onChange={(e) =>
+                setFeaturedTitles((prev) => ({
+                  ...prev,
+                  [article.slug]: e.target.value,
+                }))
+              }
+              aria-label="Article title"
+              className={`font-display leading-snug text-ink ${
+                large
+                  ? "text-[1.85rem] sm:text-[2.2rem]"
+                  : "text-[1.35rem] sm:text-[1.5rem]"
+              }`}
+            />
+            <p
+              className={`mt-2 text-ink-soft ${
+                large
+                  ? "text-[1.15rem] leading-relaxed"
+                  : "text-[1.05rem] leading-relaxed"
+              }`}
+            >
+              {article.excerpt ||
+                excerptFrom(normalizeMarkdown(article.content), article.title)}
+            </p>
+          </div>
+        }
+      >
+        <ArticleCard article={article} kicker={kicker} large={large} />
+      </EditableBlock>
+    );
+  }
+
   return (
     <div className="fade-mount pb-16">
       <EditableBlock
         id="masthead"
-        label="Site name & tagline"
+        label="name and tagline"
         onSave={() =>
           saveSettingsPatch({ name: name.trim(), tagline: tagline.trim() })
         }
         editor={
-          <>
-            <EditField label="Site name" value={name} onChange={setName} />
-            <EditField
-              label="Tagline"
-              value={tagline}
-              onChange={setTagline}
-              rows={3}
+          <div className="mx-auto max-w-6xl px-2 pt-6 text-center sm:px-4 sm:pt-8">
+            <InlineText
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              aria-label="Site name"
+              className="masthead-title text-center text-[clamp(2.4rem,7vw,4.6rem)] text-ink"
             />
-          </>
+            <InlineArea
+              value={tagline}
+              onChange={(e) => setTagline(e.target.value)}
+              aria-label="Tagline"
+              rows={3}
+              className="mx-auto mt-4 max-w-2xl text-center text-[1.15rem] leading-relaxed text-ink-soft sm:text-[1.2rem]"
+            />
+          </div>
         }
       >
         <Masthead name={settings.name} tagline={settings.tagline} />
@@ -120,68 +208,38 @@ export function EditableHome({
       <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
         <EditableBlock
           id="explore"
-          label="Explore more about"
+          label="explore words"
           onSave={() =>
             saveSettingsPatch({
               linkWords: linkWords
                 .map((w) => ({
                   label: w.label.trim(),
-                  href: w.href.trim(),
+                  href: w.href,
                 }))
-                .filter((w) => w.label && w.href),
+                .filter((w) => w.label),
             })
           }
           editor={
-            <>
-              {linkWords.map((word, index) => (
-                <div
-                  key={index}
-                  className="space-y-3 border border-rule bg-paper p-4"
-                >
-                  <EditField
-                    label="Word shown"
+            <div>
+              <p className="kicker mb-3">Explore more about</p>
+              <div className="flex flex-col gap-2">
+                {linkWords.map((word, index) => (
+                  <InlineText
+                    key={index}
                     value={word.label}
-                    onChange={(label) =>
+                    onChange={(e) =>
                       setLinkWords((list) =>
-                        list.map((w, i) => (i === index ? { ...w, label } : w)),
+                        list.map((w, i) =>
+                          i === index ? { ...w, label: e.target.value } : w,
+                        ),
                       )
                     }
+                    aria-label={`Word ${index + 1}`}
+                    className="text-[1.1rem] font-semibold text-link sm:text-[1.15rem]"
                   />
-                  <EditField
-                    label="Link (for example /article/ahura-mazda)"
-                    value={word.href}
-                    onChange={(href) =>
-                      setLinkWords((list) =>
-                        list.map((w, i) => (i === index ? { ...w, href } : w)),
-                      )
-                    }
-                  />
-                  <button
-                    type="button"
-                    className={`${btnOutline} text-lg`}
-                    onClick={() =>
-                      setLinkWords((list) =>
-                        list.filter((_, i) => i !== index),
-                      )
-                    }
-                  >
-                    Remove this word
-                  </button>
-                </div>
-              ))}
-              <button
-                type="button"
-                className={`${btnSolid} text-lg`}
-                onClick={() =>
-                  setLinkWords((list) => [
-                    ...list,
-                    { label: "", href: "/" },
-                  ])
-                }
-              >
-                Add a word
-              </button>
-            </>
+                ))}
+              </div>
+            </div>
           }
         >
           <section className="mb-10 border-b border-rule pb-8">
@@ -217,51 +275,25 @@ export function EditableHome({
           </div>
         </div>
 
-        <EditableBlock
-          id="featured"
-          label="Featured articles"
-          onSave={async () => {
-            if (!user) throw new Error("Not signed in");
-            const lines = featuredText
-              .split("\n")
-              .map((s) => s.trim())
-              .filter(Boolean);
-            await saveNav(sections, lines, user.email || user.uid);
-            await adminFetch("/api/revalidate", {
-              method: "POST",
-              body: JSON.stringify({ paths: ["/", "/topics"] }),
-            });
-          }}
-          editor={
-            <EditField
-              label="One article page name per line (the part after /article/)"
-              value={featuredText}
-              onChange={setFeaturedText}
-              rows={8}
+        {lead ? (
+          <section className="mb-10 border-b border-rule pb-10">
+            <FeaturedEditable article={lead} kicker="Start here" large />
+          </section>
+        ) : null}
+
+        <section className="mb-12 grid gap-8 border-b border-rule pb-10 sm:grid-cols-2 lg:grid-cols-3">
+          {rest.map((article, i) => (
+            <FeaturedEditable
+              key={article.slug}
+              article={article}
+              kicker={i < 2 ? "Featured" : undefined}
             />
-          }
-        >
-          <>
-            {lead ? (
-              <section className="mb-10 border-b border-rule pb-10">
-                <ArticleCard article={lead} kicker="Start here" large />
-              </section>
-            ) : null}
-            <section className="mb-12 grid gap-8 border-b border-rule pb-10 sm:grid-cols-2 lg:grid-cols-3">
-              {rest.map((article, i) => (
-                <ArticleCard
-                  key={article.slug}
-                  article={article}
-                  kicker={i < 2 ? "Featured" : undefined}
-                />
-              ))}
-            </section>
-          </>
-        </EditableBlock>
+          ))}
+        </section>
 
         {latestSeries ? (
           <section className="mb-12 border-b border-rule pb-10">
-            <ArticleCard
+            <FeaturedEditable
               article={latestSeries}
               kicker="Latest in the history series"
             />
@@ -302,8 +334,8 @@ export function EditableHome({
                           }
                         : s,
                     );
-                    const featured = await loadHomeFeatured();
-                    await saveNav(next, featured, user.email || user.uid);
+                    const featuredSlugs = await loadHomeFeatured();
+                    await saveNav(next, featuredSlugs, user.email || user.uid);
                     await adminFetch("/api/revalidate", {
                       method: "POST",
                       body: JSON.stringify({
@@ -313,35 +345,37 @@ export function EditableHome({
                     return { sections: next };
                   }}
                   editor={
-                    <>
-                      <EditField
-                        label="Section title"
+                    <div className="space-y-3 p-2">
+                      <InlineText
                         value={draft?.title ?? section.title}
-                        onChange={(title) =>
+                        onChange={(e) =>
                           setSectionDrafts((list) =>
                             list.map((d) =>
-                              d.id === section.id ? { ...d, title } : d,
+                              d.id === section.id
+                                ? { ...d, title: e.target.value }
+                                : d,
                             ),
                           )
                         }
+                        aria-label="Section title"
+                        className="font-display text-[1.35rem] text-ink"
                       />
-                      <EditField
-                        label="Short description"
+                      <InlineArea
                         value={draft?.blurb ?? section.blurb}
-                        onChange={(blurb) =>
+                        onChange={(e) =>
                           setSectionDrafts((list) =>
                             list.map((d) =>
-                              d.id === section.id ? { ...d, blurb } : d,
+                              d.id === section.id
+                                ? { ...d, blurb: e.target.value }
+                                : d,
                             ),
                           )
                         }
+                        aria-label="Short description"
                         rows={2}
+                        className="text-[1.05rem] leading-relaxed text-ink-soft"
                       />
-                      <p className="text-[1.05rem] text-ink-soft">
-                        To change which articles are listed, open this section
-                        page and use the pencil there.
-                      </p>
-                    </>
+                    </div>
                   }
                 >
                   <Link
@@ -368,7 +402,7 @@ export function EditableHome({
 
         <EditableBlock
           id="contact"
-          label="Contact"
+          label="contact"
           onSave={() =>
             saveSettingsPatch({
               contact: {
@@ -379,25 +413,32 @@ export function EditableHome({
             })
           }
           editor={
-            <>
-              <EditField
-                label="Contact name"
+            <aside className="border border-rule bg-paper-deep/60 p-4 sm:p-5">
+              <p className="kicker mb-2">Contact</p>
+              <p className="mb-1 text-[0.95rem] text-ink-soft">Name</p>
+              <InlineText
                 value={contactName}
-                onChange={setContactName}
+                onChange={(e) => setContactName(e.target.value)}
+                aria-label="Contact name"
+                className="font-display text-2xl text-ink"
               />
-              <EditField
-                label="Contact email"
+              <p className="mb-1 mt-3 text-[0.95rem] text-ink-soft">Email</p>
+              <InlineText
                 type="email"
                 value={contactEmail}
-                onChange={setContactEmail}
+                onChange={(e) => setContactEmail(e.target.value)}
+                aria-label="Contact email"
+                className="text-[1.1rem] text-ink"
               />
-              <EditField
-                label="Contact address"
+              <p className="mb-1 mt-3 text-[0.95rem] text-ink-soft">Address</p>
+              <InlineArea
                 value={contactAddress}
-                onChange={setContactAddress}
+                onChange={(e) => setContactAddress(e.target.value)}
+                aria-label="Contact address"
                 rows={3}
+                className="text-[0.98rem] leading-relaxed text-ink-soft"
               />
-            </>
+            </aside>
           }
         >
           <CtaBar

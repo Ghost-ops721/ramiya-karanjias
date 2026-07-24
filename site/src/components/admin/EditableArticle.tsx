@@ -6,7 +6,7 @@ import { ArticleBody } from "@/components/ArticleBody";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { CtaBar } from "@/components/CtaBar";
 import { EditableBlock } from "@/components/admin/EditableBlock";
-import { EditField } from "@/components/admin/EditFields";
+import { InlineArea, InlineText } from "@/components/admin/InlineEdit";
 import { useAdminAuth } from "@/components/admin/AdminAuthProvider";
 import { useEditMode } from "@/components/admin/EditModeProvider";
 import { saveArticleDoc } from "@/components/admin/saveContent";
@@ -28,7 +28,6 @@ export function EditableArticle({ article, section, crumbs }: Props) {
   const [committed, setCommitted] = useState(article);
   const [title, setTitle] = useState(article.title);
   const [content, setContent] = useState(article.content);
-  const [source, setSource] = useState(article.source ?? "");
 
   useEffect(() => {
     setCommitted(article);
@@ -38,7 +37,6 @@ export function EditableArticle({ article, section, crumbs }: Props) {
     if (activeBlockId === "article") {
       setTitle(committed.title);
       setContent(committed.content);
-      setSource(committed.source ?? "");
     }
   }, [activeBlockId, committed]);
 
@@ -49,12 +47,12 @@ export function EditableArticle({ article, section, crumbs }: Props) {
       <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_16rem]">
         <EditableBlock
           id="article"
-          label="This article"
+          label="this article"
           onSave={async () => {
             if (!user) throw new Error("Not signed in");
             await saveArticleDoc(
               article.slug,
-              { title, content, source },
+              { title, content, source: committed.source ?? "" },
               user.email || user.uid,
             );
             await adminFetch("/api/revalidate", {
@@ -69,26 +67,27 @@ export function EditableArticle({ article, section, crumbs }: Props) {
               ...article,
               title: title.trim(),
               content: normalized,
-              source: source.trim() || undefined,
               excerpt: excerptFrom(normalized, title.trim()),
             });
           }}
           editor={
-            <>
-              <EditField label="Title" value={title} onChange={setTitle} />
-              <EditField
-                label="Article text"
+            <article>
+              {section ? <p className="kicker mb-3">{section.title}</p> : null}
+              <InlineText
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                aria-label="Title"
+                className="font-display text-[clamp(1.9rem,4vw,2.75rem)] leading-tight text-ink"
+              />
+              <hr className="paper-rule my-6" />
+              <InlineArea
                 value={content}
-                onChange={setContent}
-                rows={22}
+                onChange={(e) => setContent(e.target.value)}
+                aria-label="Article text"
+                rows={20}
+                className="min-h-[20rem] text-[1.12rem] leading-relaxed text-ink"
               />
-              <EditField
-                label="Source web address (optional)"
-                type="url"
-                value={source}
-                onChange={setSource}
-              />
-            </>
+            </article>
           }
         >
           <article>

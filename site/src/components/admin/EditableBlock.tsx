@@ -8,7 +8,9 @@ import {
 } from "@/components/admin/EditModeProvider";
 import { btnOutline, btnSolid } from "@/lib/buttons";
 
-/** Pencil next to a live section. Click → edit only this block → Save. */
+/**
+ * Soft pencil on the live page. Edit keeps the layout — type in place, Save.
+ */
 export function EditableBlock({
   id,
   label,
@@ -37,13 +39,13 @@ export function EditableBlock({
 
   async function handleSave() {
     setBusy(true);
-    setStatus("Saving…");
+    setStatus(null);
     try {
       const patch = await onSave();
       afterSave(patch ?? undefined);
     } catch (err) {
       console.error(err);
-      setStatus("Save failed. Check your connection and try again.");
+      setStatus("Save failed. Please try again.");
     } finally {
       setBusy(false);
     }
@@ -55,10 +57,9 @@ export function EditableBlock({
 
   if (isEditing) {
     return (
-      <div className="relative border-2 border-ink bg-paper-deep/30 p-4 sm:p-5">
-        <p className="kicker mb-4">Editing: {label}</p>
-        <div className="space-y-4">{editor}</div>
-        <div className="mt-5 flex flex-wrap gap-3">
+      <div className="relative rounded-sm px-1 py-1">
+        {editor}
+        <div className="mt-4 flex flex-wrap gap-3">
           <button
             type="button"
             disabled={busy}
@@ -84,14 +85,14 @@ export function EditableBlock({
   }
 
   return (
-    <div className={`relative ${showPencil ? "pr-14" : ""}`}>
+    <div className={`relative ${showPencil ? "pr-12" : ""}`}>
       {showPencil ? (
         <button
           type="button"
           onClick={() => setActiveBlockId(id)}
-          className="absolute right-0 top-0 z-10 inline-flex h-11 w-11 items-center justify-center border-2 border-ink bg-paper text-ink hover:bg-ink hover:text-paper"
-          aria-label={`Edit ${label}`}
-          title={`Edit ${label}`}
+          className="absolute right-0 top-0 z-10 inline-flex h-9 w-9 items-center justify-center rounded-md border border-rule bg-paper text-ink-soft transition-colors hover:border-ink hover:text-ink"
+          aria-label={`Change this: ${label}`}
+          title="Change this"
         >
           <PencilIcon />
         </button>
@@ -104,12 +105,12 @@ export function EditableBlock({
 function PencilIcon() {
   return (
     <svg
-      width="22"
-      height="22"
+      width="18"
+      height="18"
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      strokeWidth="2"
+      strokeWidth="1.75"
       strokeLinecap="round"
       strokeLinejoin="round"
       aria-hidden

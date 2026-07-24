@@ -24,6 +24,7 @@ type EditModeValue = {
   activeBlockId: string | null;
   busy: boolean;
   status: string | null;
+  wink: boolean;
   themeOpen: boolean;
   themeLive: SiteTheme;
   settings: SiteSettings;
@@ -31,6 +32,7 @@ type EditModeValue = {
   setActiveBlockId: (id: string | null) => void;
   setBusy: (busy: boolean) => void;
   setStatus: (status: string | null) => void;
+  clearWink: () => void;
   setThemeOpen: (open: boolean) => void;
   setTheme: (next: SiteTheme | ((prev: SiteTheme) => SiteTheme)) => void;
   afterSave: (patch?: SavePatch) => void;
@@ -71,6 +73,7 @@ export function EditModeProvider({
   const [activeBlockId, setActiveBlockIdState] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [status, setStatus] = useState<string | null>(null);
+  const [wink, setWink] = useState(false);
   const [themeOpen, setThemeOpen] = useState(false);
   const [baselineSettings, setBaselineSettings] = useState(() =>
     cloneSettings(settings),
@@ -139,6 +142,8 @@ export function EditModeProvider({
     [baselineSettings.theme],
   );
 
+  const clearWink = useCallback(() => setWink(false), []);
+
   const afterSave = useCallback(
     (patch?: SavePatch) => {
       if (patch?.settings) setBaselineSettings(cloneSettings(patch.settings));
@@ -146,7 +151,8 @@ export function EditModeProvider({
       setActiveBlockIdState(null);
       setThemeOpen(false);
       setThemeDraft(null);
-      setStatus("Saved — live for everyone.");
+      setStatus(null);
+      setWink(true);
       router.refresh();
     },
     [router],
@@ -157,6 +163,7 @@ export function EditModeProvider({
       activeBlockId,
       busy,
       status,
+      wink,
       themeOpen,
       themeLive,
       settings: baselineSettings,
@@ -164,6 +171,7 @@ export function EditModeProvider({
       setActiveBlockId,
       setBusy,
       setStatus,
+      clearWink,
       setThemeOpen: setThemeOpenSafe,
       setTheme,
       afterSave,
@@ -172,11 +180,13 @@ export function EditModeProvider({
       activeBlockId,
       busy,
       status,
+      wink,
       themeOpen,
       themeLive,
       baselineSettings,
       baselineSections,
       setActiveBlockId,
+      clearWink,
       setThemeOpenSafe,
       setTheme,
       afterSave,
