@@ -25,7 +25,6 @@ export function AdminToolbar() {
     clearWink,
     themeOpen,
     themeLive,
-    settings,
     setThemeOpen,
     setTheme,
     setBusy,
@@ -47,13 +46,13 @@ export function AdminToolbar() {
     setBusy(true);
     setStatus(null);
     try {
-      const next = { ...settings, theme: themeLive };
-      await saveSiteSettings(next, user!.email || user!.uid);
+      const next = { theme: themeLive };
+      const saved = await saveSiteSettings(next, user!.email || user!.uid);
       await adminFetch("/api/revalidate", {
         method: "POST",
         body: JSON.stringify({ paths: ["/", "/topics"] }),
       });
-      afterSave({ settings: next });
+      afterSave({ settings: saved });
     } catch (err) {
       console.error(err);
       setStatus("Save failed. Please try again.");

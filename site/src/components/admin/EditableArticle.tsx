@@ -10,9 +10,8 @@ import { InlineArea, InlineText } from "@/components/admin/InlineEdit";
 import { useAdminAuth } from "@/components/admin/AdminAuthProvider";
 import { useEditMode } from "@/components/admin/EditModeProvider";
 import {
-  loadHomeFeatured,
+  patchNav,
   saveArticleDoc,
-  saveNav,
 } from "@/components/admin/saveContent";
 import { useAdminFetch } from "@/components/admin/useAdminFetch";
 import { excerptFrom, normalizeMarkdown } from "@/lib/cms-types";
@@ -96,13 +95,12 @@ export function EditableArticle({ article, section, crumbs }: Props) {
               { title: trimmedTitle, content, source: committed.source ?? "" },
               user.email || user.uid,
             );
-            const nextSections = renameNavItem(
-              sections,
-              article.slug,
-              trimmedTitle,
+            const { sections: nextSections } = await patchNav(
+              (current) => ({
+                sections: renameNavItem(current, article.slug, trimmedTitle),
+              }),
+              user.email || user.uid,
             );
-            const featured = await loadHomeFeatured();
-            await saveNav(nextSections, featured, user.email || user.uid);
             await adminFetch("/api/revalidate", {
               method: "POST",
               body: JSON.stringify({

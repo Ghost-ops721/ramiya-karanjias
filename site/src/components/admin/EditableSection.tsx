@@ -8,7 +8,7 @@ import { EditableBlock } from "@/components/admin/EditableBlock";
 import { InlineArea, InlineText } from "@/components/admin/InlineEdit";
 import { useAdminAuth } from "@/components/admin/AdminAuthProvider";
 import { useEditMode } from "@/components/admin/EditModeProvider";
-import { loadHomeFeatured, saveNav } from "@/components/admin/saveContent";
+import { patchNav } from "@/components/admin/saveContent";
 import { useAdminFetch } from "@/components/admin/useAdminFetch";
 import type { Article } from "@/lib/content";
 import type { NavItem } from "@/lib/nav";
@@ -59,13 +59,16 @@ export function EditableSection({ sectionId, articles }: Props) {
         label="section title"
         onSave={async () => {
           if (!user) throw new Error("Not signed in");
-          const next = sections.map((s) =>
-            s.id === sectionId
-              ? { ...s, title: title.trim(), blurb: blurb.trim() }
-              : s,
+          const { sections: next } = await patchNav(
+            (current) => ({
+              sections: current.map((s) =>
+                s.id === sectionId
+                  ? { ...s, title: title.trim(), blurb: blurb.trim() }
+                  : s,
+              ),
+            }),
+            user.email || user.uid,
           );
-          const featured = await loadHomeFeatured();
-          await saveNav(next, featured, user.email || user.uid);
           await adminFetch("/api/revalidate", {
             method: "POST",
             body: JSON.stringify({

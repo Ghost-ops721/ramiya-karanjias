@@ -10,8 +10,7 @@ import { InlineArea, InlineText } from "@/components/admin/InlineEdit";
 import { useAdminAuth } from "@/components/admin/AdminAuthProvider";
 import { useEditMode } from "@/components/admin/EditModeProvider";
 import {
-  loadHomeFeatured,
-  saveNav,
+  patchNav,
   saveSiteSettings,
   saveArticleDoc,
 } from "@/components/admin/saveContent";
@@ -127,19 +126,12 @@ export function EditableHome({
 
   async function saveSettingsPatch(patch: Partial<SiteSettings>) {
     if (!user) throw new Error("Not signed in");
-    const next: SiteSettings = {
-      ...settings,
-      ...patch,
-      contact: patch.contact ?? settings.contact,
-      linkWords: patch.linkWords ?? settings.linkWords,
-      theme: settings.theme,
-    };
-    await saveSiteSettings(next, user.email || user.uid);
+    const saved = await saveSiteSettings(patch, user.email || user.uid);
     await adminFetch("/api/revalidate", {
       method: "POST",
       body: JSON.stringify({ paths: ["/", "/topics"] }),
     });
-    return { settings: next };
+    return { settings: saved };
   }
 
   async function saveArticleTitle(article: Article, title: string) {
@@ -154,9 +146,12 @@ export function EditableHome({
       },
       user.email || user.uid,
     );
-    const nextSections = renameNavItem(sections, article.slug, trimmed);
-    const featuredSlugs = await loadHomeFeatured();
-    await saveNav(nextSections, featuredSlugs, user.email || user.uid);
+    const { sections: nextSections } = await patchNav(
+      (current) => ({
+        sections: renameNavItem(current, article.slug, trimmed),
+      }),
+      user.email || user.uid,
+    );
     await adminFetch("/api/revalidate", {
       method: "POST",
       body: JSON.stringify({
@@ -366,17 +361,20 @@ export function EditableHome({
                   label={section.title}
                   onSave={async () => {
                     if (!user || !draft) throw new Error("Nothing to save");
-                    const next = sections.map((s) =>
-                      s.id === section.id
-                        ? {
-                            ...s,
-                            title: draft.title.trim(),
-                            blurb: draft.blurb.trim(),
-                          }
-                        : s,
+                    const { sections: next } = await patchNav(
+                      (current) => ({
+                        sections: current.map((s) =>
+                          s.id === section.id
+                            ? {
+                                ...s,
+                                title: draft.title.trim(),
+                                blurb: draft.blurb.trim(),
+                              }
+                            : s,
+                        ),
+                      }),
+                      user.email || user.uid,
                     );
-                    const featuredSlugs = await loadHomeFeatured();
-                    await saveNav(next, featuredSlugs, user.email || user.uid);
                     await adminFetch("/api/revalidate", {
                       method: "POST",
                       body: JSON.stringify({

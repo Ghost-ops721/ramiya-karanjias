@@ -57,49 +57,74 @@ async function snapshotBeforeWrite(
   });
 }
 
-export async function saveSiteSettings(
-  settings: SiteSettings,
-  email: string,
-) {
-  await snapshotBeforeWrite("settings", "site", "Site settings", email);
+export type SiteSettingsPatch = {
+  name?: string;
+  tagline?: string;
+  contact?: SiteSettings["contact"];
+  linkWords?: SiteSettings["linkWords"];
+  theme?: SiteSettings["theme"];
+};
 
-  await setDoc(
-    doc(clientDb(), "settings", "site"),
-    {
-      name: settings.name.trim(),
-      tagline: settings.tagline.trim(),
-      contact: {
-        name: settings.contact.name.trim(),
-        email: settings.contact.email.trim(),
-        address: settings.contact.address.trim(),
-      },
-      linkWords: (settings.linkWords ?? [])
-        .map((w) => ({
-          label: w.label.trim(),
-          href: w.href.trim(),
-        }))
-        .filter((w) => w.label && w.href),
-      theme: normalizeTheme(settings.theme),
-      updatedAt: serverTimestamp(),
-      updatedBy: email,
+function settingsFromDoc(data: DocumentData | undefined): SiteSettings {
+  return {
+    name: String(data?.name ?? ""),
+    tagline: String(data?.tagline ?? ""),
+    contact: {
+      name: String(data?.contact?.name ?? ""),
+      email: String(data?.contact?.email ?? ""),
+      address: String(data?.contact?.address ?? ""),
     },
-    { merge: true },
-  );
+    linkWords: Array.isArray(data?.linkWords)
+      ? (data!.linkWords as { label: string; href: string }[])
+      : [],
+    theme: normalizeTheme(data?.theme),
+  };
 }
 
-export async function saveNav(
-  sections: Section[],
-  homeFeatured: string[],
+/**
+ * Partial settings write. Only provided fields are updated in Firestore so a
+ * theme/contact save cannot clobber a newer site name from another edit.
+ */
+export async function saveSiteSettings(
+  patch: SiteSettingsPatch,
   email: string,
-) {
-  await snapshotBeforeWrite(
-    "nav",
-    "sections",
-    "Navigation & sections",
-    email,
-  );
+): Promise<SiteSettings> {
+  await snapshotBeforeWrite("settings", "site", "Site settings", email);
 
-  const cleanSections = sections.map((s) => ({
+  const update: Record<string, unknown> = {
+    updatedAt: serverTimestamp(),
+    updatedBy: email,
+  };
+
+  if (patch.name !== undefined) update.name = patch.name.trim();
+  if (patch.tagline !== undefined) update.tagline = patch.tagline.trim();
+  if (patch.contact !== undefined) {
+    update.contact = {
+      name: patch.contact.name.trim(),
+      email: patch.contact.email.trim(),
+      address: patch.contact.address.trim(),
+    };
+  }
+  if (patch.linkWords !== undefined) {
+    update.linkWords = patch.linkWords
+      .map((w) => ({
+        label: w.label.trim(),
+        href: w.href.trim(),
+      }))
+      .filter((w) => w.label && w.href);
+  }
+  if (patch.theme !== undefined) {
+    update.theme = normalizeTheme(patch.theme);
+  }
+
+  const ref = doc(clientDb(), "settings", "site");
+  await setDoc(ref, update, { merge: true });
+  const snap = await getDoc(ref);
+  return settingsFromDoc(snap.data());
+}
+
+function cleanSections(sections: Section[]): Section[] {
+  return sections.map((s) => ({
     id: s.id,
     title: s.title,
     blurb: s.blurb,
@@ -118,17 +143,53 @@ export async function saveNav(
       return item;
     }),
   }));
+}
+
+/** Read–modify–write nav so concurrent section/title edits cannot overwrite each other. */
+export async function patchNav(
+  mutate: (sections: Section[], homeFeatured: string[]) => {
+    sections: Section[];
+    homeFeatured?: string[];
+  },
+  email: string,
+): Promise<{ sections: Section[]; homeFeatured: string[] }> {
+  const ref = doc(clientDb(), "nav", "sections");
+  await snapshotBeforeWrite("nav", "sections", "Navigation & sections", email);
+
+  const snap = await getDoc(ref);
+  const currentSections = Array.isArray(snap.data()?.sections)
+    ? (snap.data()!.sections as Section[])
+    : [];
+  const currentFeatured = Array.isArray(snap.data()?.homeFeatured)
+    ? (snap.data()!.homeFeatured as string[])
+    : [];
+
+  const result = mutate(currentSections, currentFeatured);
+  const sections = cleanSections(result.sections);
+  const homeFeatured = (result.homeFeatured ?? currentFeatured)
+    .map((s) => s.trim())
+    .filter(Boolean);
 
   await setDoc(
-    doc(clientDb(), "nav", "sections"),
+    ref,
     {
-      sections: cleanSections,
-      homeFeatured: homeFeatured.map((s) => s.trim()).filter(Boolean),
+      sections,
+      homeFeatured,
       updatedAt: serverTimestamp(),
       updatedBy: email,
     },
     { merge: true },
   );
+
+  return { sections, homeFeatured };
+}
+
+export async function saveNav(
+  sections: Section[],
+  homeFeatured: string[],
+  email: string,
+) {
+  return patchNav(() => ({ sections, homeFeatured }), email);
 }
 
 export async function loadHomeFeatured(): Promise<string[]> {

@@ -14,7 +14,14 @@ export async function adminFetch(
   if (init.body && !headers.has("Content-Type")) {
     headers.set("Content-Type", "application/json");
   }
-  return fetch(input, { ...init, headers });
+  const res = await fetch(input, { ...init, headers });
+  if (!res.ok) {
+    const detail = await res.text().catch(() => "");
+    throw new Error(
+      `Request failed (${res.status})${detail ? `: ${detail}` : ""}`,
+    );
+  }
+  return res;
 }
 
 export function useAdminFetch() {
