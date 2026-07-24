@@ -59,6 +59,20 @@ function cloneSections(sections: Section[]): Section[] {
   }));
 }
 
+function settingsKey(s: SiteSettings): string {
+  return JSON.stringify({
+    name: s.name,
+    tagline: s.tagline,
+    contact: s.contact,
+    linkWords: s.linkWords ?? [],
+    theme: normalizeTheme(s.theme),
+  });
+}
+
+function sectionsKey(list: Section[]): string {
+  return JSON.stringify(list);
+}
+
 export function EditModeProvider({
   settings,
   sections,
@@ -83,12 +97,41 @@ export function EditModeProvider({
   );
   const [themeDraft, setThemeDraft] = useState<SiteTheme | null>(null);
   const skipPathCancel = useRef(true);
+  /** Keeps pencil-saves visible until RSC refresh catches up (avoids stale flash). */
+  const pendingSaveRef = useRef<{
+    settings?: SiteSettings;
+    sections?: Section[];
+  } | null>(null);
 
   useEffect(() => {
-    if (!activeBlockId && !themeOpen) {
+    if (activeBlockId || themeOpen) return;
+
+    const pending = pendingSaveRef.current;
+    let nextPending = pending ? { ...pending } : null;
+
+    if (pending?.settings) {
+      if (settingsKey(settings) === settingsKey(pending.settings)) {
+        delete nextPending!.settings;
+        setBaselineSettings(cloneSettings(settings));
+      }
+      // else keep optimistic baseline — ignore stale server props
+    } else {
       setBaselineSettings(cloneSettings(settings));
+    }
+
+    if (pending?.sections) {
+      if (sectionsKey(sections) === sectionsKey(pending.sections)) {
+        delete nextPending!.sections;
+        setBaselineSections(cloneSections(sections));
+      }
+    } else {
       setBaselineSections(cloneSections(sections));
     }
+
+    if (nextPending && !nextPending.settings && !nextPending.sections) {
+      nextPending = null;
+    }
+    pendingSaveRef.current = nextPending;
   }, [settings, sections, activeBlockId, themeOpen]);
 
   useEffect(() => {
@@ -146,8 +189,19 @@ export function EditModeProvider({
 
   const afterSave = useCallback(
     (patch?: SavePatch) => {
-      if (patch?.settings) setBaselineSettings(cloneSettings(patch.settings));
-      if (patch?.sections) setBaselineSections(cloneSections(patch.sections));
+      const pending = { ...(pendingSaveRef.current ?? {}) };
+      if (patch?.settings) {
+        const next = cloneSettings(patch.settings);
+        setBaselineSettings(next);
+        pending.settings = next;
+      }
+      if (patch?.sections) {
+        const next = cloneSections(patch.sections);
+        setBaselineSections(next);
+        pending.sections = next;
+      }
+      pendingSaveRef.current =
+        pending.settings || pending.sections ? pending : null;
       setActiveBlockIdState(null);
       setThemeOpen(false);
       setThemeDraft(null);

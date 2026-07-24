@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ArticleCard } from "@/components/ArticleCard";
 import { CtaBar } from "@/components/CtaBar";
 import { Masthead } from "@/components/Masthead";
@@ -29,8 +29,24 @@ type Props = {
   featured: Article[];
 };
 
+function renameNavItem(sections: Section[], slug: string, title: string): Section[] {
+  return sections.map((s) => ({
+    ...s,
+    items: s.items.map((item) => {
+      if (item.slug === slug) return { ...item, title };
+      if (!item.children?.length) return item;
+      return {
+        ...item,
+        children: item.children.map((c) =>
+          c.slug === slug ? { ...c, title } : c,
+        ),
+      };
+    }),
+  }));
+}
+
 export function EditableHome({
-  featured,
+  featured: featuredProp,
 }: Props) {
   const { user } = useAdminAuth();
   const { settings, sections, activeBlockId } = useEditMode();
@@ -52,6 +68,31 @@ export function EditableHome({
   const [featuredTitles, setFeaturedTitles] = useState<Record<string, string>>(
     {},
   );
+  const [featured, setFeatured] = useState(featuredProp);
+  const pendingFeaturedRef = useRef<Record<string, Article> | null>(null);
+
+  useEffect(() => {
+    const pending = pendingFeaturedRef.current;
+    if (!pending) {
+      setFeatured(featuredProp);
+      return;
+    }
+    const nextPending = { ...pending };
+    for (const slug of Object.keys(nextPending)) {
+      const server = featuredProp.find((a) => a.slug === slug);
+      const local = nextPending[slug];
+      if (
+        server &&
+        server.title === local.title &&
+        server.content === local.content
+      ) {
+        delete nextPending[slug];
+      }
+    }
+    pendingFeaturedRef.current =
+      Object.keys(nextPending).length > 0 ? nextPending : null;
+    setFeatured(featuredProp.map((a) => nextPending[a.slug] ?? a));
+  }, [featuredProp]);
 
   useEffect(() => {
     if (activeBlockId === "masthead") {
@@ -103,15 +144,19 @@ export function EditableHome({
 
   async function saveArticleTitle(article: Article, title: string) {
     if (!user) throw new Error("Not signed in");
+    const trimmed = title.trim();
     await saveArticleDoc(
       article.slug,
       {
-        title: title.trim(),
+        title: trimmed,
         content: article.content,
         source: article.source ?? "",
       },
       user.email || user.uid,
     );
+    const nextSections = renameNavItem(sections, article.slug, trimmed);
+    const featuredSlugs = await loadHomeFeatured();
+    await saveNav(nextSections, featuredSlugs, user.email || user.uid);
     await adminFetch("/api/revalidate", {
       method: "POST",
       body: JSON.stringify({
@@ -119,6 +164,15 @@ export function EditableHome({
         paths: ["/", "/topics"],
       }),
     });
+    const updated: Article = { ...article, title: trimmed };
+    pendingFeaturedRef.current = {
+      ...(pendingFeaturedRef.current ?? {}),
+      [article.slug]: updated,
+    };
+    setFeatured((list) =>
+      list.map((a) => (a.slug === article.slug ? updated : a)),
+    );
+    return { sections: nextSections };
   }
 
   function FeaturedEditable({
@@ -135,9 +189,7 @@ export function EditableHome({
       <EditableBlock
         id={`article-${article.slug}`}
         label={article.title}
-        onSave={async () => {
-          await saveArticleTitle(article, draftTitle);
-        }}
+        onSave={async () => saveArticleTitle(article, draftTitle)}
         editor={
           <div>
             {kicker ? <p className="kicker mb-2">{kicker}</p> : null}
