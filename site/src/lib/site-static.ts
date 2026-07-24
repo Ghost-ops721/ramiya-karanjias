@@ -1,7 +1,7 @@
 export const site = {
   name: "Ramiyar Karanjia",
   tagline:
-    "Zoroastrian religion, Avesta & Pahlavi, Iranian history, prayers, rituals, and the Shahnameh — written for clear reading.",
+    "Zoroastrian religion, Avesta & Pahlavi, Iranian history, prayers, rituals, and the Shahnameh - written for clear reading.",
   contact: {
     name: "Dr. Ramiyar P. Karanjia",
     address:

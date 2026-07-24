@@ -27,12 +27,10 @@ type Props = {
   sections: Section[];
   homeFeatured: string[];
   featured: Article[];
-  latestSeries: Article | null;
 };
 
 export function EditableHome({
   featured,
-  latestSeries,
 }: Props) {
   const { user } = useAdminAuth();
   const { settings, sections, activeBlockId } = useEditMode();
@@ -70,7 +68,7 @@ export function EditableHome({
     }
     if (activeBlockId?.startsWith("article-")) {
       const slug = activeBlockId.slice("article-".length);
-      const art = featured.find((a) => a.slug === slug) ?? latestSeries;
+      const art = featured.find((a) => a.slug === slug);
       if (art && art.slug === slug) {
         setFeaturedTitles((prev) => ({ ...prev, [slug]: art.title }));
       }
@@ -80,7 +78,7 @@ export function EditableHome({
         sections.map((s) => ({ id: s.id, title: s.title, blurb: s.blurb })),
       );
     }
-  }, [activeBlockId, settings, sections, featured, latestSeries]);
+  }, [activeBlockId, settings, sections, featured]);
 
   const lead = featured[0];
   const rest = featured.slice(1);
@@ -290,15 +288,6 @@ export function EditableHome({
             />
           ))}
         </section>
-
-        {latestSeries ? (
-          <section className="mb-12 border-b border-rule pb-10">
-            <FeaturedEditable
-              article={latestSeries}
-              kicker="Latest in the history series"
-            />
-          </section>
-        ) : null}
 
         <section className="mb-12">
           <div className="mb-6 flex items-end justify-between gap-4">

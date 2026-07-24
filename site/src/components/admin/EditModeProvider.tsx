@@ -26,7 +26,6 @@ type EditModeValue = {
   status: string | null;
   wink: boolean;
   themeOpen: boolean;
-  historyOpen: boolean;
   themeLive: SiteTheme;
   settings: SiteSettings;
   sections: Section[];
@@ -35,7 +34,6 @@ type EditModeValue = {
   setStatus: (status: string | null) => void;
   clearWink: () => void;
   setThemeOpen: (open: boolean) => void;
-  setHistoryOpen: (open: boolean) => void;
   setTheme: (next: SiteTheme | ((prev: SiteTheme) => SiteTheme)) => void;
   afterSave: (patch?: SavePatch) => void;
 };
@@ -77,7 +75,6 @@ export function EditModeProvider({
   const [status, setStatus] = useState<string | null>(null);
   const [wink, setWink] = useState(false);
   const [themeOpen, setThemeOpen] = useState(false);
-  const [historyOpen, setHistoryOpen] = useState(false);
   const [baselineSettings, setBaselineSettings] = useState(() =>
     cloneSettings(settings),
   );
@@ -88,11 +85,11 @@ export function EditModeProvider({
   const skipPathCancel = useRef(true);
 
   useEffect(() => {
-    if (!activeBlockId && !themeOpen && !historyOpen) {
+    if (!activeBlockId && !themeOpen) {
       setBaselineSettings(cloneSettings(settings));
       setBaselineSections(cloneSections(sections));
     }
-  }, [settings, sections, activeBlockId, themeOpen, historyOpen]);
+  }, [settings, sections, activeBlockId, themeOpen]);
 
   useEffect(() => {
     if (skipPathCancel.current) {
@@ -101,7 +98,6 @@ export function EditModeProvider({
     }
     setActiveBlockIdState(null);
     setThemeOpen(false);
-    setHistoryOpen(false);
     setThemeDraft(null);
     setStatus(null);
   }, [pathname]);
@@ -110,7 +106,6 @@ export function EditModeProvider({
     setActiveBlockIdState(id);
     if (id) {
       setThemeOpen(false);
-      setHistoryOpen(false);
       setStatus(null);
     }
   }, []);
@@ -124,7 +119,6 @@ export function EditModeProvider({
     (open: boolean) => {
       if (open) {
         setActiveBlockIdState(null);
-        setHistoryOpen(false);
         setThemeDraft(
           normalizeTheme(baselineSettings.theme ?? DEFAULT_THEME),
         );
@@ -136,16 +130,6 @@ export function EditModeProvider({
     },
     [baselineSettings.theme],
   );
-
-  const setHistoryOpenSafe = useCallback((open: boolean) => {
-    if (open) {
-      setActiveBlockIdState(null);
-      setThemeOpen(false);
-      setThemeDraft(null);
-      setStatus(null);
-    }
-    setHistoryOpen(open);
-  }, []);
 
   const setTheme = useCallback(
     (next: SiteTheme | ((prev: SiteTheme) => SiteTheme)) => {
@@ -166,7 +150,6 @@ export function EditModeProvider({
       if (patch?.sections) setBaselineSections(cloneSections(patch.sections));
       setActiveBlockIdState(null);
       setThemeOpen(false);
-      setHistoryOpen(false);
       setThemeDraft(null);
       setStatus(null);
       setWink(true);
@@ -182,7 +165,6 @@ export function EditModeProvider({
       status,
       wink,
       themeOpen,
-      historyOpen,
       themeLive,
       settings: baselineSettings,
       sections: baselineSections,
@@ -191,7 +173,6 @@ export function EditModeProvider({
       setStatus,
       clearWink,
       setThemeOpen: setThemeOpenSafe,
-      setHistoryOpen: setHistoryOpenSafe,
       setTheme,
       afterSave,
     }),
@@ -201,14 +182,12 @@ export function EditModeProvider({
       status,
       wink,
       themeOpen,
-      historyOpen,
       themeLive,
       baselineSettings,
       baselineSections,
       setActiveBlockId,
       clearWink,
       setThemeOpenSafe,
-      setHistoryOpenSafe,
       setTheme,
       afterSave,
     ],

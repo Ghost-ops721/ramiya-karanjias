@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect } from "react";
-import { AdminHistoryPanel } from "@/components/admin/AdminHistoryPanel";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useAdminAuth } from "@/components/admin/AdminAuthProvider";
 import { useEditMode } from "@/components/admin/EditModeProvider";
 import { saveSiteSettings } from "@/components/admin/saveContent";
@@ -13,26 +14,26 @@ import {
   type TextSizePreset,
 } from "@/lib/theme";
 
-/** Quiet bar + Look panel + History panel + Saved wink toast. */
+/** Quiet bar + Look panel + Saved wink toast. History lives at /admin/history. */
 export function AdminToolbar() {
   const { user, loading, logout } = useAdminAuth();
+  const pathname = usePathname();
   const {
     busy,
     status,
     wink,
     clearWink,
     themeOpen,
-    historyOpen,
     themeLive,
     settings,
     setThemeOpen,
-    setHistoryOpen,
     setTheme,
     setBusy,
     setStatus,
     afterSave,
   } = useEditMode();
   const adminFetch = useAdminFetch();
+  const onHistoryPage = pathname === "/admin/history";
 
   useEffect(() => {
     if (!wink) return;
@@ -66,22 +67,25 @@ export function AdminToolbar() {
       <div className="sticky top-0 z-50 border-b border-rule bg-paper/95 backdrop-blur-sm">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-3 px-4 py-2.5 sm:px-6">
           <p className="mr-auto text-[1.05rem] text-ink-soft">
-            Hi — tap a pencil to change something
+            {onHistoryPage
+              ? "History of your saved changes"
+              : "Hi - tap a pencil to change something"}
           </p>
-          <button
-            type="button"
-            onClick={() => setThemeOpen(!themeOpen)}
+          {!onHistoryPage ? (
+            <button
+              type="button"
+              onClick={() => setThemeOpen(!themeOpen)}
+              className="text-[1.05rem] font-semibold text-ink underline-offset-4 hover:underline"
+            >
+              {themeOpen ? "Close look" : "Look of the page"}
+            </button>
+          ) : null}
+          <Link
+            href={onHistoryPage ? "/" : "/admin/history"}
             className="text-[1.05rem] font-semibold text-ink underline-offset-4 hover:underline"
           >
-            {themeOpen ? "Close look" : "Look of the page"}
-          </button>
-          <button
-            type="button"
-            onClick={() => setHistoryOpen(!historyOpen)}
-            className="text-[1.05rem] font-semibold text-ink underline-offset-4 hover:underline"
-          >
-            {historyOpen ? "Close history" : "History"}
-          </button>
+            {onHistoryPage ? "Back to site" : "History"}
+          </Link>
           <button
             type="button"
             onClick={() => void logout()}
@@ -97,7 +101,7 @@ export function AdminToolbar() {
           </p>
         ) : null}
 
-        {themeOpen ? (
+        {themeOpen && !onHistoryPage ? (
           <div className="border-t border-rule bg-paper px-4 py-5 sm:px-6">
             <div className="mx-auto max-w-6xl space-y-5">
               <div>
@@ -175,8 +179,6 @@ export function AdminToolbar() {
             </div>
           </div>
         ) : null}
-
-        {historyOpen ? <AdminHistoryPanel /> : null}
       </div>
 
       {wink ? (

@@ -16,7 +16,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const settings = await getSiteSettings();
   return {
     title: {
-      default: `${settings.name} — Zoroastrian religion & Iranian history`,
+      default: `${settings.name} - Zoroastrian religion & Iranian history`,
       template: `%s · ${settings.name}`,
     },
     description: settings.tagline,

@@ -1,5 +1,5 @@
 import { EditableHome } from "@/components/admin/EditableHome";
-import { getArticle, getArticlesBySlugs } from "@/lib/content";
+import { getArticlesBySlugs } from "@/lib/content";
 import { getHomeFeatured, getSections } from "@/lib/nav-data";
 import { getSiteSettings } from "@/lib/site-data";
 
@@ -12,9 +12,6 @@ export default async function HomePage() {
     getSiteSettings(),
   ]);
   const featured = await getArticlesBySlugs(homeFeatured);
-  const latestSeries = await getArticle(
-    "sss-41-yazdezerd-iii-yazdezerd-sheheryar-the-last-sasanian-emperor-part-4",
-  );
 
   return (
     <EditableHome
@@ -22,7 +19,6 @@ export default async function HomePage() {
       sections={sections}
       homeFeatured={[...homeFeatured]}
       featured={featured}
-      latestSeries={latestSeries}
     />
   );
 }

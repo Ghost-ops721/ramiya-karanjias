@@ -14,7 +14,7 @@ export function LogoMark({
   return (
     <Link
       href="/"
-      aria-label="Ramiyar Karanjia — Home"
+      aria-label="Ramiyar Karanjia - Home"
       className={`font-display font-[650] leading-none tracking-tight text-ink no-underline hover:text-accent ${sizeClass} ${className}`}
     >
       RK

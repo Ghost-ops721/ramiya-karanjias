@@ -11,20 +11,20 @@ export type Section = {
   items: NavItem[];
 };
 
-/** Information architecture from ramiyarkaranjia.com menus — content only, no invented pages. */
+/** Information architecture from ramiyarkaranjia.com menus - content only, no invented pages. */
 export const sections: Section[] = [
   {
     id: "introduction",
-    title: "Zoroastrianism — An Introduction",
+    title: "Zoroastrianism - An Introduction",
     blurb: "Start here: God, the Prophet, teachings, ethics, and daily spiritual life.",
     items: [
-      { title: "Zoroastrianism — An Introduction", slug: "lets-understand-zoroastrianism-mar-sep-2016" },
+      { title: "Zoroastrianism - An Introduction", slug: "lets-understand-zoroastrianism-mar-sep-2016" },
       { title: "Necessity to Understand Religion", slug: "need-to-understand-religioneligion" },
       { title: "Ahura Mazda", slug: "ahura-mazda" },
       { title: "Prophet Zarathushtra", slug: "prophet-zarathushtra" },
       { title: "Teachings and World View", slug: "world-view-and-teachings" },
       { title: "Zoroastrian Ethics and Virtues", slug: "zoroastrian-ethics-and-virtues" },
-      { title: "Human Being — Concept and Composition", slug: "human-being-concept-and-composition" },
+      { title: "Human Being - Concept and Composition", slug: "human-being-concept-and-composition" },
       { title: "Zoroastrian Priests", slug: "zoroastrian-priests" },
       { title: "Manthra Prayers", slug: "manthra-prayers" },
       { title: "Spirituality", slug: "spirituality" },
@@ -60,7 +60,7 @@ export const sections: Section[] = [
     title: "Zoroastrian Rituals",
     blurb: "From Kasti and Navjot to Yasna, Vendidad, and death rituals.",
     items: [
-      { title: "Zoroastrian Rituals — Overview", slug: "rituals-in-zoroastrianism" },
+      { title: "Zoroastrian Rituals - Overview", slug: "rituals-in-zoroastrianism" },
       { title: "Kasti ritual", slug: "kasti-ritual" },
       { title: "Nahan and Bareshnum", slug: "nahan-and-bareshnum-rituals" },
       { title: "Afringan, Jashan and Faresta", slug: "afringan-jashan-and-faresta-rituals" },
@@ -88,7 +88,7 @@ export const sections: Section[] = [
     blurb: "Daily practice, prayers, Kasti, Muktad, and the Ses.",
     items: [
       { title: "Practices and Customs", slug: "zoroastrian-daily-life-practices-and-customs" },
-      { title: "Prayers — Which, When and Why", slug: "prayers-which-when-and-why" },
+      { title: "Prayers - Which, When and Why", slug: "prayers-which-when-and-why" },
       { title: "Prayers During Muktad Days", slug: "muktad-prayers" },
       { title: "Significance of Ses", slug: "significance-of-ses" },
       { title: "How to Do the Kasti Ritual", slug: "how-to-do-the-kasti-ritual" },
@@ -100,7 +100,7 @@ export const sections: Section[] = [
     title: "Avesta, Pahlavi, Pazand & Persian",
     blurb: "The languages and texts of the tradition.",
     items: [
-      { title: "Iranian Languages — Overview", slug: "iranian-languages-avesta-pahlavi-etc" },
+      { title: "Iranian Languages - Overview", slug: "iranian-languages-avesta-pahlavi-etc" },
       { title: "Avesta", slug: "avesta" },
       { title: "Old Persian", slug: "old-persian" },
       { title: "Pahlavi", slug: "pahlavi" },
@@ -111,7 +111,7 @@ export const sections: Section[] = [
   },
   {
     id: "tamam-khordeh-avesta",
-    title: "Tamam Khordeh Avesta — Shahenshahi",
+    title: "Tamam Khordeh Avesta - Shahenshahi",
     blurb: "Full Shahenshahi Khordeh Avesta prayers and text.",
     items: [
       {
@@ -122,25 +122,25 @@ export const sections: Section[] = [
   },
   {
     id: "audio",
-    title: "Prayers — Audio & Texts",
+    title: "Prayers - Audio & Texts",
     blurb: "Listen and read: Kasti, Sarosh Baj, 101 Names, and more.",
     items: [
-      { title: "Prayers — Audio", slug: "audio-prayers" },
+      { title: "Prayers - Audio", slug: "audio-prayers" },
       { title: "Kasti Prayers", slug: "navjote-prayers" },
       { title: "Sarosh Baj", slug: "sarosh-baj" },
       { title: "101 Names of God", slug: "101-names-of-god" },
       { title: "Doa Tandarosti", slug: "doa-tandarosti" },
       { title: "Cherag-no-Namaskar", slug: "cherag-no-namaskar" },
       { title: "Names of Roj, Mah, Geh, Gatha and Gahambar", slug: "names-of-roj-mah-etc" },
-      { title: "Framraot Ha (Muktad days 1–5)", slug: "framraot-ha-for-days-1-to-5-of-muktad" },
+      { title: "Framraot Ha (Muktad days 1-5)", slug: "framraot-ha-for-days-1-to-5-of-muktad" },
     ],
   },
   {
     id: "yashts",
-    title: "Yashts — An Understanding",
+    title: "Yashts - An Understanding",
     blurb: "Explanations of the major Yashts.",
     items: [
-      { title: "Yashts — An Understanding", slug: "yashts-2" },
+      { title: "Yashts - An Understanding", slug: "yashts-2" },
       { title: "Hormazd Yasht", slug: "hormazd-yasht-2" },
       { title: "Haptan Yasht", slug: "haptan-yasht" },
       { title: "Ardibahesht Yasht", slug: "ardibahesht-yasht" },
@@ -156,8 +156,8 @@ export const sections: Section[] = [
     title: "Gehs & Nyāsh",
     blurb: "The five watches of the day and the five Nyāsh.",
     items: [
-      { title: "5 Gehs — An Understanding", slug: "5-gehs-an-understanding" },
-      { title: "5 Nyāsh — An Understanding", slug: "5-nyash-an-understanding" },
+      { title: "5 Gehs - An Understanding", slug: "5-gehs-an-understanding" },
+      { title: "5 Nyāsh - An Understanding", slug: "5-nyash-an-understanding" },
     ],
   },
   {
@@ -165,7 +165,7 @@ export const sections: Section[] = [
     title: "Ancient Iranian History",
     blurb: "From the Peshdadian kings through the Sasanian empire.",
     items: [
-      { title: "History of Iran — Highlights", slug: "history-of-iran-highlights" },
+      { title: "History of Iran - Highlights", slug: "history-of-iran-highlights" },
       { title: "I Peshdad", slug: "827-2" },
       { title: "II Kayan", slug: "ii-kayan" },
       { title: "III Achaemenian / Hakhamanish", slug: "iii-achaemenian-hakhamanish" },
@@ -195,17 +195,17 @@ export const sections: Section[] = [
     blurb: "A mini encyclopedia of Zoroastrian and Iranian terms.",
     items: [
       {
-        title: "Zarthoshti-Pedia — Mini Encyclopedia",
+        title: "Zarthoshti-Pedia - Mini Encyclopedia",
         slug: "zarthoshti-pedia-a-mini-encyclopedia-for-zoroastrian-and-iranian-terms",
       },
     ],
   },
   {
     id: "faqs",
-    title: "Tell Me Why — FAQs",
+    title: "Tell Me Why - FAQs",
     blurb: "Plain answers to common questions, topic by topic.",
     items: [
-      { title: "Tell Me Why — Index", slug: "tell-me-why" },
+      { title: "Tell Me Why - Index", slug: "tell-me-why" },
       { title: "1. QA about Ahura Mazda", slug: "1-qa-about-ahura-mazda" },
       { title: "2. QA about Prophet Zarathushtra", slug: "qa-about-prophet-zaratushtra" },
       { title: "3. QA about Religion", slug: "3-qa-about-religion" },
@@ -246,111 +246,111 @@ export const sections: Section[] = [
     blurb: "Serial essays on the Sasanian dynasty, from founding kings to the last emperors.",
     items: [
       {
-        title: "SSS 41. Yazdezerd III — Part 4",
+        title: "SSS 41. Yazdezerd III - Part 4",
         slug: "sss-41-yazdezerd-iii-yazdezerd-sheheryar-the-last-sasanian-emperor-part-4",
       },
       {
-        title: "SSS 40. Yazdezerd III — Part 3",
+        title: "SSS 40. Yazdezerd III - Part 3",
         slug: "sss-40-yazdezerd-iii-yazdezerd-sheheryar-the-last-sasanian-emperor-part-3",
       },
       {
-        title: "SSS 39. Yazdezerd III — Part 2",
+        title: "SSS 39. Yazdezerd III - Part 2",
         slug: "sss-39-yazdezerd-iii-yazdezerd-sheheryar-the-last-sasanian-emperor-part-2",
       },
       {
-        title: "SSS 38. Yazdezerd III — Part 1",
+        title: "SSS 38. Yazdezerd III - Part 1",
         slug: "sss-38-yazdezerd-sheheryar-yazdezerd-iii-the-last-sasanian-emperor-part-1",
       },
       {
-        title: "SSS 37. Ten Rulers in Eight Years — Part 2",
+        title: "SSS 37. Ten Rulers in Eight Years - Part 2",
         slug: "sss-37-10-rulers-in-8-years-before-the-last-sasanian-emperor-part-2",
       },
       {
-        title: "SSS 36. Ten Rulers in Eight Years — Part 1",
+        title: "SSS 36. Ten Rulers in Eight Years - Part 1",
         slug: "sss-36-10-rulers-in-8-years-628-635before-the-last-sasanian-emperor-part-1",
       },
       {
-        title: "SSS 35. King Kobad II / Shiroy (Feb 628 – Nov 628)",
+        title: "SSS 35. King Kobad II / Shiroy (Feb 628 - Nov 628)",
         slug: "sss-35-king-kobad-ii-shiroy-feb-628-nov-628",
       },
       {
-        title: "SSS 34. King Khushru Parviz — Part 11 (last)",
+        title: "SSS 34. King Khushru Parviz - Part 11 (last)",
         slug: "sss-34-king-khushru-parviz-khushru-cosroe-ii-591-628-part-11-last",
       },
       {
-        title: "SSS 33. King Khushru Parviz — Part 10",
+        title: "SSS 33. King Khushru Parviz - Part 10",
         slug: "sss-33-king-khushru-parviz-khushru-cosroe-ii-591-628-part-10",
       },
       {
-        title: "SSS 32. King Khushru Parviz — Part 9",
+        title: "SSS 32. King Khushru Parviz - Part 9",
         slug: "sss-32-king-khushru-parviz-khushru-cosroe-ii-591-628-part-9",
       },
       {
-        title: "SSS 31. King Khushru Parviz — Part 8",
+        title: "SSS 31. King Khushru Parviz - Part 8",
         slug: "sss-31-king-khushru-parviz-khushru-cosroe-ii-591-628-part-8",
       },
       {
-        title: "SSS 30. King Khushru Parviz — Part 7",
+        title: "SSS 30. King Khushru Parviz - Part 7",
         slug: "sss-30-king-khushru-parviz-khushru-cosroe-ii-591-628-part-7",
       },
       {
-        title: "SSS 29. King Khushru Parviz — Part 6",
+        title: "SSS 29. King Khushru Parviz - Part 6",
         slug: "sss-29-king-khushru-parviz-khushru-cosroe-ii-591-628-part-6",
       },
       {
-        title: "SSS 28. King Khushru Parviz — Part 5",
+        title: "SSS 28. King Khushru Parviz - Part 5",
         slug: "sss-28-king-khushru-parviz-khushru-cosroe-ii-591-628-part-5",
       },
       {
-        title: "SSS 27. King Khushru Parviz — Part 4",
+        title: "SSS 27. King Khushru Parviz - Part 4",
         slug: "sss-27-king-khushru-parviz-khushru-cosroe-ii-591-628-part-4",
       },
       {
-        title: "SSS 26. King Khushru Parviz — Part 3",
+        title: "SSS 26. King Khushru Parviz - Part 3",
         slug: "sss-26-king-khushru-parviz-khushru-cosroe-ii-591-628-part-3",
       },
       {
-        title: "SSS 25. King Khushru Parviz — Part 2",
+        title: "SSS 25. King Khushru Parviz - Part 2",
         slug: "sss-24-king-khushru-parviz-khushru-cosroe-ii-591-628-part-2",
       },
       {
-        title: "SSS 24. King Khushru Parviz — Part 1",
+        title: "SSS 24. King Khushru Parviz - Part 1",
         slug: "sss-24-king-khushru-parviz-khushru-cosroe-ii-591-628-part-1",
       },
       {
-        title: "SSS 23. King Hormazd IV — Part 2",
+        title: "SSS 23. King Hormazd IV - Part 2",
         slug: "sss-23-king-hormazd-iv-579-591-part-2",
       },
       {
-        title: "SSS 22. King Hormazd IV — Part 1",
+        title: "SSS 22. King Hormazd IV - Part 1",
         slug: "sss-22-king-hormazd-iv-579-591-part-1",
       },
       {
-        title: "SSS 21. King Khushru / Nosherwan Ādel — Part 7 (last)",
+        title: "SSS 21. King Khushru / Nosherwan Ādel - Part 7 (last)",
         slug: "sss-21-king-khushru-cosroe-i-nosherwan-adel-531-579-part-7-last",
       },
       {
-        title: "SSS 20. King Khushru / Nosherwan Ādel — Part 6",
+        title: "SSS 20. King Khushru / Nosherwan Ādel - Part 6",
         slug: "sss-20-king-khushru-cosroe-i-nosherwan-adel-531-579-part-6",
       },
       {
-        title: "SSS 19. King Khushru / Nosherwan Ādel — Part 5",
+        title: "SSS 19. King Khushru / Nosherwan Ādel - Part 5",
         slug: "sss-19-king-khushru-cosroe-i-nosherwan-adel-531-579-part-5",
       },
       {
-        title: "SSS 18. King Khushru / Nosherwan Ādel — Part 4",
+        title: "SSS 18. King Khushru / Nosherwan Ādel - Part 4",
         slug: "sss18-king-khushru-cosroe-i-nosherwan-adel-531-579-part-4",
       },
       {
-        title: "SSS 17. King Khushru / Nosherwan Ādel — Part 3",
+        title: "SSS 17. King Khushru / Nosherwan Ādel - Part 3",
         slug: "sss17-king-khushru-cosroe-i-nosherwan-adel-531-579-part-3",
       },
       {
-        title: "SSS 16. King Khushru / Nosherwan Ādel — Part 2",
+        title: "SSS 16. King Khushru / Nosherwan Ādel - Part 2",
         slug: "sss15-king-khushru-cosroe-i-nosherwan-adel-531-579-part-2",
       },
       {
-        title: "SSS 15. King Khushru / Nosherwan Ādel — Part 1",
+        title: "SSS 15. King Khushru / Nosherwan Ādel - Part 1",
         slug: "sss15-king-khushru-cosroe-i-nosherwan-adel-531-579-part-i",
       },
       {
@@ -362,19 +362,19 @@ export const sections: Section[] = [
         slug: "sss13-kings-yazdezard-ii-440-457-hormazd-iii-457-458-piruz-i-458-484",
       },
       {
-        title: "SSS 12. King Behram V, Behram-gur — Part 4",
+        title: "SSS 12. King Behram V, Behram-gur - Part 4",
         slug: "sss12-king-behram-v-behram-gur-419-439-part-4-concluded",
       },
       {
-        title: "SSS 11. King Behram V, Behram-gur — Part 3",
+        title: "SSS 11. King Behram V, Behram-gur - Part 3",
         slug: "sss11-king-behram-v-behram-gur-part-3",
       },
       {
-        title: "SSS 10. King Behram V, Behram-gur — Part 2",
+        title: "SSS 10. King Behram V, Behram-gur - Part 2",
         slug: "sss10-king-behram-v-behram-gur-part-2",
       },
       {
-        title: "SSS 9. King Behram V, Behram-gur — Part 1",
+        title: "SSS 9. King Behram V, Behram-gur - Part 1",
         slug: "sss9-king-behram-v-behram-gur-part-1",
       },
       {
@@ -382,11 +382,11 @@ export const sections: Section[] = [
         slug: "sss7-yazdezerd-i-athil-and-3-kings-before-him",
       },
       {
-        title: "SSS 7. Shahpur II, The Great — Part 2",
+        title: "SSS 7. Shahpur II, The Great - Part 2",
         slug: "sss6-shahpur-ii-the-great-part-2",
       },
       {
-        title: "SSS 6. Shahpur II, The Great — Part 1",
+        title: "SSS 6. Shahpur II, The Great - Part 1",
         slug: "sss6-shahpur-ii-the-great-1",
       },
       {
@@ -394,15 +394,15 @@ export const sections: Section[] = [
         slug: "sss5-shahpur-i",
       },
       {
-        title: "SSS 4. Ardeshir Bābekān — Part 3",
+        title: "SSS 4. Ardeshir Bābekān - Part 3",
         slug: "sss4-ardeshir-babekan-part-3-concluded",
       },
       {
-        title: "SSS 3. Ardeshir Bābekān — Part 2",
+        title: "SSS 3. Ardeshir Bābekān - Part 2",
         slug: "sss3-ardeshir-babekanpart-2",
       },
       {
-        title: "SSS 2. Ardeshir Bābekān — Part 1",
+        title: "SSS 2. Ardeshir Bābekān - Part 1",
         slug: "sss2-ardeshir-babekan-papakan-226-240-ce",
       },
       {
